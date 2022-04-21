@@ -1,0 +1,38 @@
+kube-prometheus-stack:
+  fullnameOverride: kube-prometheus-stack
+  grafana:
+    plugins:
+    - grafana-piechart-panel
+    - grafana-worldmap-panel
+  prometheus: {}
+    # prometheusOperator:
+    #   resources:
+    #     limits:
+    #       cpu: 200m
+    #       memory: 200Mi
+    #     requests:
+    #       cpu: 100m
+    #       memory: 100Mi
+
+  kube-state-metrics:
+    resources:
+      limits:
+        cpu: 100m
+        memory: 64Mi
+      requests:
+        cpu: 10m
+        memory: 32Mi
+
+  prometheus-node-exporter:
+    prometheus:
+      monitor:
+        enabled: true
+        additionalLabels:
+          release: kube-prometheus-stack
+    resources:
+      limits:
+        cpu: 200m
+        memory: 50Mi
+      requests:
+        cpu: 100m
+        memory: 30Mi
