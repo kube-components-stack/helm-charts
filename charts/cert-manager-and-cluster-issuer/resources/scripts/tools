@@ -1,0 +1,26 @@
+#!/bin/bash
+
+function update_charts () {
+  set -euo pipefail
+  local tempfile=$(mktemp /tmp/Chart.XXXXXXXXXX)
+  local src_file=Chart.yaml
+  local charts=$(yq -o=json $src_file | jq '[.dependencies[] | { chart: .name, repoURL: .repository, targetRevision: .version }]')
+  
+  for row in $(echo "${charts}" | jq -r '.[] | @base64'); do
+    _jq() {
+     echo ${row} | base64 --decode | jq -r ${1}
+    }
+    local chart=$(echo $(_jq '.chart'))
+    local repoURL=$(echo $(_jq '.repoURL'))
+    local targetRevision=$(echo $(_jq '.targetRevision'))
+
+    helm repo add $chart --force-update $repoURL &> /dev/null
+    local version=$(helm search repo $chart/$chart -o json | jq -r --arg name $chart/$chart '.[] | select(.name == $name) | .version')
+    yq -i '.dependencies[] |= select(.name == "'$chart'").version="'$version'"' $src_file
+  done
+
+  helm dependency update
+}
+
+# Allows to call a function based on arguments passed to the script
+$*

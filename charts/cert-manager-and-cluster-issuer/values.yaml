@@ -1,0 +1,25 @@
+cert-manager:
+  enabled: true
+  fullnameOverride: cert-manager
+  installCRDs: true
+  securityContext:
+    runAsNonRoot: true
+    fsGroup: 1000
+    runAsUser: 1000
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+      - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+  ingressShim:
+    defaultIssuerName: selfsigned-cluster-issuer
+    defaultIssuerKind: ClusterIssuer
+    defaultIssuerGroup: cert-manager.io
+  prometheus:
+    enabled: true
+    servicemonitor:
+      enabled: true
+      labels:
+        release: kube-prometheus-stack
