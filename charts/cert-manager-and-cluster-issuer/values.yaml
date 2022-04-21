@@ -1,5 +1,4 @@
 cert-manager:
-  enabled: true
   fullnameOverride: cert-manager
   installCRDs: true
   securityContext:
