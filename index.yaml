@@ -1,0 +1,19 @@
+apiVersion: v1
+entries:
+  cert-manager-and-cluster-issuer:
+  - apiVersion: v2
+    appVersion: v1.8.0
+    created: "2022-04-21T16:03:21.127998039Z"
+    dependencies:
+    - condition: cert-manager.enabled
+      name: cert-manager
+      repository: https://charts.jetstack.io
+      version: v1.8.0
+    description: A Helm chart for Kubernetes
+    digest: fbad3e45d5e292066c03a0dbe008acfffebe1ed7926585f2636a72f160a99e69
+    name: cert-manager-and-cluster-issuer
+    type: application
+    urls:
+    - https://github.com/kube-components-stack/helm-charts/releases/download/cert-manager-and-cluster-issuer-0.1.0/cert-manager-and-cluster-issuer-0.1.0.tgz
+    version: 0.1.0
+generated: "2022-04-21T16:03:21.128009839Z"
