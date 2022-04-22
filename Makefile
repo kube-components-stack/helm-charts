@@ -17,5 +17,16 @@ update-charts: ## update-charts
 update-charts:
 	set -e
 	cd $(ROOT_DIR)
-	source resources/scripts/tools
+	source scripts/tools
+
+	cd charts/cert-manager-and-cluster-issuer
 	update_charts
+	cd $(ROOT_DIR)
+	
+	cd charts/kubemod-with-modrules
+	update_charts
+	cd $(ROOT_DIR)
+	
+	cd charts/kube-prometheus-stack-with-grafana-dashboards
+	update_charts
+	cd $(ROOT_DIR)
