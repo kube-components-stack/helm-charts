@@ -1,0 +1,21 @@
+{{- if and .Values.certificate.enabled .Values.certificate.issuerRef.kind .Values.certificate.issuerRef.name (.Capabilities.APIVersions.Has "cert-manager.io/v1/Certificate") }}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Values.certificate.name }}
+  namespace: {{ .Values.namespace }}
+spec:
+  dnsNames:
+  - kubemod-webhook-service
+  - kubemod-webhook-service.{{ .Values.namespace }}
+  - kubemod-webhook-service.{{ .Values.namespace }}.svc
+  - kubemod-webhook-service.{{ .Values.namespace }}.svc.cluster.local
+  issuerRef:
+    kind: {{ .Values.certificate.issuerRef.kind }}
+    name: {{ .Values.certificate.issuerRef.name }}
+  secretName: {{ .Values.certificate.secretName }}
+  subject:
+    organizations:
+      - cluster-api
+{{- end }}

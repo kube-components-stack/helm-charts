@@ -1,0 +1,17 @@
+- name: patch-deployments-containers-securitycontext
+  namespace: kubemod-system
+  spec:
+    targetNamespaceRegex: .*
+    type: Patch
+    match:
+      - matchValue: Deployment
+        select: $.kind
+    patch:
+      - op: add
+        select: '$.spec.template.spec.containers[? isEmpty(@.securityContext)]'
+        path: '/spec/template/spec/containers/#0/securityContext'
+        value: |-
+          runAsNonRoot: true
+          capabilities:
+            drop:
+            - ALL

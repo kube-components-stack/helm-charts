@@ -1,0 +1,6 @@
+dependencies:
+- name: kubemod
+  repository: https://malibukoko.github.io/kubemod-helm
+  version: 0.3.0
+digest: sha256:3a27f73457a877c6682307b3c35f9283c020ec692efff26fc5aad3645ce4523a
+generated: "2022-04-21T01:52:49.547425914+02:00"

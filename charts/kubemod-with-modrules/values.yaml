@@ -1,0 +1,42 @@
+namespace: kubemod-system
+
+# create Certificate
+certificate:
+  enabled: true
+  name: kubemod-crt
+  secretName: webhook-server-cert
+  issuerRef:
+    kind: "" #ClusterIssuer
+    name: "" #selfsigned-cluster-issuer
+
+kubemod:
+  enabled: true
+  job:
+    enabled: false
+  webhook:
+    annotations:
+      cert-manager.io/inject-ca-from: kubemod-system/kubemod-crt
+    resources:
+    - namespaces
+    - nodes
+    - configmaps
+    - persistentvolumeclaims
+    - persistentvolumes
+    - secrets
+    - services
+    - daemonsets
+    - deployments
+    - replicasets
+    - statefulsets
+    - horizontalpodautoscalers
+    - ingresses
+    - pods
+    - cronjobs
+    - jobs
+    - serviceaccounts
+    - clusterrolebindings
+    - clusterroles
+    - rolebindings
+    - roles
+    - applications
+    - applications.argoproj.io

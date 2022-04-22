@@ -1,0 +1,52 @@
+# Using Vector in order to scrap kubernetes-logs of Ingress Nginx Controller thanks a label on a POD
+- name: patch-ingress-nginx-applications
+  namespace: kubemod-system
+  spec:
+    targetNamespaceRegex: .*
+    type: Patch
+    match:
+      # Match Application...
+      - select: $.kind
+        matchValue: Application
+      
+      # ...which have name composed by ingress + nginx...
+      - select: '$.metadata.name'
+        matchRegex: 'ingress'
+      - select: '$.metadata.name'
+        matchRegex: 'nginx'
+
+      # ...and have not yet received the injection.
+      - select: '$.spec.ignoreDifferences[? @.kind == "Deployment" ].jqPathExpressions[*]'
+        matchValues:
+        - '.spec.template.metadata.labels."vector.sources.kubernetes-logs/label"'
+        negate: true
+    patch:
+      # ignoring difference on label: vector.sources.kubernetes-logs/label
+      - op: add
+        path: /spec/ignoreDifferences/-1
+        value: |-
+          group: apps
+          kind: Deployment
+          jqPathExpressions:
+          - '.spec.template.metadata.labels."vector.sources.kubernetes-logs/label"'
+
+- name: patch-ingress-nginx-controller-deployments
+  namespace: kubemod-system
+  spec:
+    targetNamespaceRegex: .*
+    type: Patch
+    match:
+      # Match Deployment...
+      - select: $.kind
+        matchValue: Deployment
+
+      # ...which have image composed by ingress + nginx...
+      - select: '$.spec.template.spec.containers[*].image'
+        matchRegex: 'ingress'
+      - select: '$.spec.template.spec.containers[*].image'
+        matchRegex: 'nginx'
+    patch:
+      # add label
+      - op: add
+        path: /spec/template/metadata/labels/vector.sources.kubernetes-logs~1label
+        value: 'ingress-nginx'
