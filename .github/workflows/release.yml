@@ -28,6 +28,7 @@ jobs:
         run: |
           helm repo add cert-manager https://charts.jetstack.io
           helm repo add kube-prometheus-stack https://prometheus-community.github.io/helm-charts
+          helm repo add kubemod https://malibukoko.github.io/kubemod-helm
 
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.4.0
