@@ -1,0 +1,736 @@
+# https://helm.sh/docs/chart_template_guide/builtin_objects/
+nameOverride: ""
+fullnameOverride: ""
+secondLevelDomain: ""
+priorityClassName: ""
+imagePullSecrets: []
+job:
+  # Deploy the kubectl job
+  enabled: false
+  image:
+    repository: bitnami/kubectl
+    pullPolicy: Always # Always or IfNotPresent
+    tag: "1.23"
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+global:
+  application:
+    apiVersion: argoproj.io/v1alpha1
+    kind: Application
+    metadata:
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+    spec:
+      project: ""
+      info: []
+      source: {}
+      destination:
+        server: https://kubernetes.default.svc
+      syncPolicy:
+        automated:
+          allowEmpty: true
+          prune: true
+          selfHeal: true
+        retry:
+          backoff:
+            duration: 30s
+            factor: 2
+            maxDuration: 2m
+          limit: 5
+        syncOptions:
+          - Validate=false
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+        # - PrunePropagationPolicy=foreground
+        # - PruneLast=true
+      ignoreDifferences:
+      - group: apiextensions.k8s.io
+        kind: CustomResourceDefinition
+        jsonPointers:
+        - /status
+apps:
+  # certificates
+  certificates:
+    enabled: true
+    namespace: cert-manager
+    charts:
+      - metadata:
+          name: cert-manager
+        spec:
+          info:
+            - name: artifacthub
+              value: https://artifacthub.io/packages/helm/cert-manager/cert-manager
+            - name: values.yaml
+              value: https://github.com/cert-manager/cert-manager/blob/master/deploy/charts/cert-manager/values.yaml
+          source:
+            chart: cert-manager
+            repoURL: https://kube-components-stack.github.io/helm-charts
+            targetRevision: 0.1.0
+  # ingress
+  ingress:
+    enabled: true
+    namespace: ingress-nginx
+    charts:
+      - metadata:
+          name: ingress-nginx
+        spec:
+          info:
+            - name: artifacthub
+              value: https://artifacthub.io/packages/helm/ingress-nginx/ingress-nginx
+            - name: homepage
+              value: https://github.com/kubernetes/ingress-nginx
+            - name: values.yaml
+              value: https://github.com/kubernetes/ingress-nginx/blob/main/charts/ingress-nginx/values.yaml
+          source:
+            chart: ingress-nginx
+            repoURL: https://kubernetes.github.io/ingress-nginx
+            targetRevision: v4.0.19
+            helm:
+              values: |
+                ---
+                controller:
+                  config:
+                    # https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/#enable-brotli
+                    enable-brotli: "true"
+                  ingressClassResource:
+                    name: nginx-01
+                  service:
+                    externalTrafficPolicy: "Local"
+                  metrics:
+                    enabled: true
+                    serviceMonitor:
+                      enabled: {{ if .Values.apps.monitoring.enabled }}true{{ else }}false{{ end }}
+                      additionalLabels:
+                        release: kube-prometheus-stack
+          ignoreDifferences:
+            - group: apiextensions.k8s.io
+              kind: CustomResourceDefinition
+              jsonPointers:
+                - /status
+            - group: apps
+              kind: Deployment
+              jqPathExpressions:
+                - '.spec.template.spec.containers[]?.resources'
+                - '.spec.template.spec.securityContext.runAsNonRoot'
+            - group: apps
+              jqPathExpressions:
+                - .spec.template.metadata.labels."vector.sources.kubernetes-logs/label"
+              kind: Deployment
+  # monitoring
+  monitoring:
+    enabled: true
+    namespace: monitoring
+    charts:
+      - metadata:
+          name: kube-prometheus-stack-crd
+          annotations:
+            argocd.argoproj.io/sync-wave: "-1"
+        spec:
+          info:
+            - name: split
+              value: https://github.com/prometheus-operator/prometheus-operator/issues/4439#issuecomment-1030198014
+          source:
+            directory:
+              recurse: true
+            path: charts/kube-prometheus-stack/crds/
+            repoURL: https://github.com/prometheus-community/helm-charts.git
+            targetRevision: kube-prometheus-stack-34.10.0
+          syncPolicy:
+            syncOptions:
+              - Replace=true
+      - metadata:
+          name: kube-prometheus-stack
+        spec:
+          info:
+            - name: artifacthub
+              value: https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack
+            - name: values.yaml
+              value: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+            - name: kube-prometheus-stack-and-argocd-how-workarounds-are-born
+              value: https://blog.ediri.io/kube-prometheus-stack-and-argocd-how-workarounds-are-born
+            - name: grafana
+              value: https://grafana.github.io/helm-charts
+            - name: prometheus-node-exporter
+              value: https://prometheus-community.github.io/helm-charts
+            - name: kube-state-metrics
+              value: https://prometheus-community.github.io/helm-charts
+          source:
+            chart: kube-prometheus-stack
+            repoURL: https://kube-components-stack.github.io/helm-charts
+            targetRevision: 0.1.0
+            helm:
+              skipCrds: true
+              values: |
+                ---
+                kube-prometheus-stack:
+                  {{- if .Values.apps.ingress.enabled }}
+                  alertmanager:
+                    ingress:
+                      enabled: true
+                      ingressClassName: nginx-01
+                      annotations:
+                        {{- if .Values.apps.certificates.enabled }}
+                        kubernetes.io/tls-acme: "true"
+                        {{- end }}
+                        nginx.ingress.kubernetes.io/ssl-redirect: "false"
+                      {{- if .Values.secondLevelDomain }}
+                      hosts:
+                      - alertmanager.{{ .Values.secondLevelDomain }}
+                      {{- end }}
+                      pathType: Prefix
+                      {{- if .Values.apps.certificates.enabled }}
+                      tls:
+                      - secretName: alertmanager-tls-certificate
+                        {{- if .Values.secondLevelDomain }}
+                        hosts:
+                        - alertmanager.{{ .Values.secondLevelDomain }}
+                        {{- end }}
+                      {{- end }}
+                  {{- end }}
+                  grafana:
+                    {{- if .Values.apps.logging.enabled }}
+                    additionalDataSources:
+                    - name: Loki
+                      access: proxy
+                      type: loki
+                      url: http://loki-distributed-gateway.{{ .Values.apps.logging.namespace }}.svc.cluster.local
+                      version: 1
+                    {{- end }}
+                    {{- if .Values.apps.ingress.enabled }}
+                    ingress:
+                      enabled: true
+                      ingressClassName: nginx-01
+                      annotations:
+                        {{- if .Values.apps.certificates.enabled }}
+                        kubernetes.io/tls-acme: "true"
+                        {{- end }}
+                        nginx.ingress.kubernetes.io/ssl-redirect: "false"
+                      {{- if .Values.secondLevelDomain }}
+                      hosts:
+                      - grafana.{{ .Values.secondLevelDomain }}
+                      {{- end }}
+                      pathType: Prefix
+                      {{- if .Values.apps.certificates.enabled }}
+                      tls:
+                      - secretName: grafana-tls-certificate
+                        {{- if .Values.secondLevelDomain }}
+                        hosts:
+                        - grafana.{{ .Values.secondLevelDomain }}
+                        {{- end }}
+                      {{- end }}
+                    {{- end }}
+                    plugins:
+                    - grafana-piechart-panel
+                    - grafana-worldmap-panel
+                  {{- if .Values.apps.ingress.enabled }}
+                  prometheus:
+                    ingress:
+                      enabled: true
+                      ingressClassName: nginx-01
+                      annotations:
+                        {{- if .Values.apps.certificates.enabled }}
+                        kubernetes.io/tls-acme: "true"
+                        {{- end }}
+                        nginx.ingress.kubernetes.io/ssl-redirect: "false"
+                      {{- if .Values.secondLevelDomain }}
+                      hosts:
+                      - prometheus.{{ .Values.secondLevelDomain }}
+                      {{- end }}
+                      pathType: Prefix
+                      {{- if .Values.apps.certificates.enabled }}
+                      tls:
+                      - secretName: prometheus-tls-certificate
+                        {{- if .Values.secondLevelDomain }}
+                        hosts:
+                        - prometheus.{{ .Values.secondLevelDomain }}
+                        {{- end }}
+                      {{- end }}
+                  {{- end }}
+
+          ignoreDifferences:
+          - group: apiextensions.k8s.io
+            kind: CustomResourceDefinition
+            jsonPointers:
+            - /status
+          - group: apps
+            kind: Deployment
+            jqPathExpressions:
+            - '.spec.template.spec.containers[]?.securityContext'
+
+  # mutating
+  mutating:
+    enabled: true
+    namespace: kubemod-system
+    protectedNamespaces:
+      - kube-system
+      - kubemod-system
+    charts:
+      - metadata:
+          name: kubemod-crd
+        spec:
+          source:
+            repoURL: https://github.com/kubemod/kubemod-helm.git
+            path: helm-chart/kubemod/crds/
+            targetRevision: kubemod-0.3.0
+            directory:
+              recurse: true
+          syncPolicy:
+            syncOptions:
+              - Replace=true
+      - metadata:
+          name: kubemod
+        spec:
+          info:
+          - name: artifacthub
+            value: https://artifacthub.io/packages/helm/kubmod/kubemod
+          - name: values.yaml
+            value: https://github.com/kubemod/kubemod-helm/blob/main/helm-chart/kubemod/values.yaml
+          - name: table-of-contents
+            value: https://github.com/kubemod/kubemod#table-of-contents
+          - name: JSONPath
+            value: https://github.com/kubemod/kubemod#kubemods-version-of-jsonpath
+          source:
+            chart: kubemod
+            repoURL: https://kube-components-stack.github.io/helm-charts
+            targetRevision: 0.1.0
+            helm:
+              releaseName: kubemod
+              skipCrds: true
+              values: |
+                ---
+                certificate:
+                  issuerRef:
+                    kind: ClusterIssuer
+                    name: selfsigned-cluster-issuer
+  # notifications
+  notifications:
+    enabled: true
+    namespace: argocd
+    charts:
+      - metadata:
+          name: argocd-notifications
+        spec:
+          info:
+            - name: artifacthub
+              value: https://artifacthub.io/packages/helm/argo/argocd-notifications
+            - name: values.yaml
+              value: https://github.com/argoproj/argo-helm/blob/master/charts/argocd-notifications/values.yaml
+          source:
+            chart: argocd-notifications
+            repoURL: https://kube-components-stack.github.io/helm-charts
+            targetRevision: 0.1.0
+  # logging
+  logging:
+    enabled: true
+    namespace: logging
+    charts:
+      - metadata:
+          name: loki-distributed
+        spec:
+          info:
+            - name: artifacthub
+              value: https://artifacthub.io/packages/helm/grafana/loki-distributed
+            - name: values.yaml
+              value: https://github.com/grafana/helm-charts/blob/main/charts/loki-distributed/values.yaml
+            - name: storage_config
+              value: https://grafana.com/docs/loki/latest/configuration/#storage_config
+          source:
+            chart: loki-distributed
+            repoURL: https://grafana.github.io/helm-charts
+            targetRevision: v0.48.1
+            helm:
+              values: |
+                ---
+                serviceMonitor:
+                  enabled: true
+                  labels:
+                    release: kube-prometheus-stack
+                loki:
+                  structuredConfig:
+                    ingester:
+                      # Disable chunk transfer which is not possible with statefulsets
+                      # and unnecessary for boltdb-shipper
+                      max_transfer_retries: 0
+                      chunk_idle_period: 1h
+                      chunk_target_size: 1536000
+                      max_chunk_age: 1h
+                    {{- if .Values.apps.objectStorage.enabled }}
+                    storage_config:
+                      aws:
+                        s3: http://minio.{{ .Values.apps.objectStorage.namespace }}.svc.cluster.local.:9000/loki
+                        s3forcepathstyle: true
+                      boltdb_shipper:
+                        active_index_directory: /var/loki/index
+                        shared_store: s3
+                        cache_location: /var/loki/cache
+                        resync_interval: 5s
+                    schema_config:
+                      configs:
+                        - from: 2020-09-07
+                          store: boltdb-shipper
+                          object_store: aws
+                          schema: v11
+                          index:
+                            prefix: loki_index_
+                            period: 24h
+                    {{- end }}
+                ingester:
+                  affinity: ~
+                distributor:
+                  affinity: ~
+                querier:
+                  affinity: ~
+                queryFrontend:
+                  affinity: ~
+                queryFrontend:
+                  affinity: ~ 
+                tableManager:
+                  affinity: ~
+                gateway:
+                  affinity: ~
+                  tolerations: []
+                ruler:
+                  affinity: ~
+                indexGateway:
+                  affinity: ~
+                memcachedChunks:
+                  affinity: ~
+                memcachedFrontend:
+                  affinity: ~
+                memcachedIndexQueries:
+                  affinity: ~
+                memcachedIndexWrites:
+                  affinity: ~
+      - metadata:
+          name: promtail
+        spec:
+          info:
+            - name: artifacthub
+              value: https://artifacthub.io/packages/helm/grafana/promtail
+          source:
+            chart: promtail
+            repoURL: https://grafana.github.io/helm-charts
+            targetRevision: v4.2.0
+            helm:
+              values: |
+                ---
+                config:
+                  lokiAddress: http://loki-distributed-gateway.{{ .Values.apps.logging.namespace }}.svc.cluster.local/loki/api/v1/push
+                serviceMonitor:
+                  enabled: true
+                  labels:
+                    release: kube-prometheus-stack
+      - metadata:
+          name: vector
+        spec:
+          info:
+            - name: artifacthub
+              value: https://artifacthub.io/packages/helm/vector/vector
+            - name: github
+              value: https://github.com/vectordotdev/helm-charts/tree/master/charts/vector
+            - name: values.yaml
+              value: https://github.com/vectordotdev/helm-charts/blob/master/charts/vector/values.yaml
+            - name: configmap.yaml
+              value: https://github.com/vectordotdev/helm-charts/blob/master/charts/vector/templates/configmap.yaml
+            - name: Logstash, Fluentd, Fluent Bit, or Vector?
+              value: https://www.cncf.io/blog/2022/02/10/logstash-fluentd-fluent-bit-or-vector-how-to-choose-the-right-open-source-log-collector/
+            - name: Store observability events in GCP Cloud Storage
+              value: https://vector.dev/docs/reference/configuration/sinks/gcp_cloud_storage/
+            - name: ingress-nginx Log format
+              value: https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/log-format/#log-format
+            - name: regex101
+              value: https://regex101.com/r/n8YqXK/1
+            - name: regex
+              value: /^(?P<remote_addr>\S+) - (?P<remote_user>\S+) \[(?P<time_local>[^\]]+)\] "(?P<request>[^"]+)" (?P<status>\d+) (?P<body_bytes_sent>\d+) "(?P<http_referer>[^"]+)" \"(?P<http_user_agent>[^"]+)" (?P<request_length>\d+) (?P<request_time>\d+\.\d+) \[(?P<proxy_upstream_name>[^\]]*)\] \[(?P<proxy_alternative_upstream_name>[^\]]*)\] (?P<upstream_addr>[0-9\.a-z\/]+:[0-9\.a-z\/]+(?:, [0-9\.a-z\/]+:[0-9\.a-z\/]+)*) (?P<upstream_response_length>\d+(?:, \d+)*) (?P<upstream_response_time>\d+\.\d+(?:, \d+\.\d+)*) (?P<upstream_status>(?:\d+|-)(?:, (?:\d+|-))*) (?P<req_id>\S+)$/gm
+          source:
+            chart: vector
+            repoURL: https://helm.vector.dev
+            targetRevision: v0.9.0
+            helm:
+              values: |
+                ---
+                service:
+                  enabled: false
+                data_dir: /vector-data-dir
+
+                # Agent, Aggregator, Stateless-Aggregator
+                role: Agent
+                
+                # https://vector.dev/docs/setup/installation/platforms/kubernetes/#agent-resource-limits
+                resources:
+                  requests:
+                    memory: 16Mi
+                    cpu: 1m
+                  limits:
+                    memory: 64Mi
+                    cpu: 100m
+
+                podMonitor:
+                  enabled: true
+                
+                customConfig:
+                  api:
+                    enabled: false
+                  sources:
+                    kubernetes_logs:
+                      type: kubernetes_logs
+                      auto_partial_merge: false
+                      extra_label_selector: vector.sources.kubernetes-logs/label=ingress-nginx
+                  transforms:
+                    stdout:
+                      type: filter
+                      inputs:
+                        - kubernetes_logs
+                      condition:
+                        type: vrl
+                        source: includes(["stdout"], .stream)
+                    parse_log_ingress_nginx:
+                      type: remap
+                      inputs:
+                        - stdout
+                      source: |
+                        structured =
+                          parse_regex!(.message, r'^(?P<nginx_remote_addr>\S+) - (?P<nginx_remote_user>\S+) \[(?P<nginx_time_local>[^\]]+)\] "(?P<nginx_request>[^"]+)" (?P<nginx_status>\d+) (?P<nginx_body_bytes_sent>\d+) "(?P<nginx_http_referer>[^"]+)" "(?P<nginx_http_user_agent>[^"]+)" (?P<nginx_request_length>\d+) (?P<nginx_request_time>\d+\.\d+) \[(?P<nginx_proxy_upstream_name>[^\]]*)\] \[(?P<nginx_proxy_alternative_upstream_name>[^\]]*)\] (?P<nginx_upstream_addr>[0-9\.a-z/]+:[0-9\.a-z/]+(?:, [0-9\.a-z/]+:[0-9\.a-z/]+)*) (?P<nginx_upstream_response_length>\d+(?:, \d+)*) (?P<nginx_upstream_response_time>\d+\.\d+(?:, \d+\.\d+)*) (?P<nginx_upstream_status>(?:\d+|-)(?:, (?:\d+|-))*) (?P<nginx_req_id>\S+)$')
+                        . = merge(., structured)
+                  sinks:
+                    # debug:
+                    #   type: console
+                    #   inputs:
+                    #     - parse_log_ingress_nginx
+                    #   target: stdout
+                    #   encoding:
+                    #     codec: json
+                    {{- if .Values.apps.objectStorage.enabled }}
+                    minio:
+                      type: aws_s3
+                      # auth:
+                      #   access_key_id: admin
+                      #   secret_access_key: password
+                      inputs:
+                        - parse_log_ingress_nginx
+                      endpoint: http://minio.{{ .Values.apps.objectStorage.namespace }}.svc.cluster.local.:9000
+                      bucket: logs
+                      key_prefix: date=%F/
+                      compression: gzip
+                      encoding:
+                        codec: ndjson
+                    {{- end }}
+  # loadBalancing
+  loadBalancing:
+    enabled: true
+    namespace: metallb
+    charts:
+      - metadata:
+          name: metallb
+        spec:
+          info:
+            - name: artifacthub
+              value: https://artifacthub.io/packages/helm/metallb/metallb
+            - name: values.yaml
+              value: https://github.com/metallb/metallb/blob/main/charts/metallb/values.yaml
+          source:
+            chart: metallb
+            repoURL: https://metallb.github.io/metallb
+            targetRevision: v0.12.1
+            helm:
+              values: |
+                ---
+                ## configInline specifies MetalLB's configuration directly, in yaml format. When configInline is used, Helm manages MetalLB's
+                ## configuration ConfigMap as part of the release, and existingConfigMap is ignored.
+                ## Refer to https://metallb.universe.tf/configuration/ for available options.
+                configInline:
+                  address-pools:
+                  - name: default
+                    protocol: layer2
+  # metrics
+  metrics:
+    enabled: true
+    namespace: kube-system
+    charts:
+      - metadata:
+          name: metrics-server
+        spec:
+          info:
+            - name: artifacthub
+              value: https://artifacthub.io/packages/helm/metrics-server/metrics-server
+            - name: values.yaml
+              value: https://github.com/kubernetes-sigs/metrics-server/blob/master/charts/metrics-server/values.yaml
+          source:
+            chart: metrics-server
+            repoURL: https://kubernetes-sigs.github.io/metrics-server
+            targetRevision: v3.8.2
+            helm:
+              values: |
+                ---
+                defaultArgs:
+                - --cert-dir=/tmp
+                - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+                - --kubelet-use-node-status-port
+                - --metric-resolution=15s
+                - --kubelet-insecure-tls=true
+                # apiService:
+                #   create: true
+                # extraArgs:
+                #   kubelet-insecure-tls: true
+                #   kubelet-preferred-address-types: InternalIP
+          ignoreDifferences:
+          - group: apiextensions.k8s.io
+            kind: CustomResourceDefinition
+            jsonPointers:
+            - /status
+          - group: apps
+            kind: Deployment
+            jqPathExpressions:
+            - '.spec.template.spec.containers[]?.resources'
+            - '.spec.template.spec.securityContext.runAsNonRoot'
+  # objectStorage
+  objectStorage:
+    enabled: true
+    namespace: minio
+    charts:
+      - metadata:
+          name: minio
+        spec:
+          info:
+            - name: chart
+              value: https://github.com/minio/minio/tree/master/helm/minio
+            - name: releases
+              value: https://github.com/minio/minio/tree/master/helm-releases
+            - name: values.yaml
+              value: https://github.com/minio/minio/blob/master/helm/minio/values.yaml
+          source:
+            chart: minio
+            repoURL: https://charts.min.io
+            targetRevision: v3.6.6
+            helm:
+              values: |
+                ---
+                image:
+                  pullPolicy: Always
+                
+                mode: standalone # standalone or distributed
+                # replicas: 4
+
+                persistence:
+                  enabled: true
+                  size: 512Mi # 500Gi
+
+                {{- if .Values.apps.ingress.enabled }}
+                ingress:
+                  enabled: true
+                  annotations:
+                    nginx.ingress.kubernetes.io/proxy-body-size: 32m
+                    {{- if (index .Values.apps "cert-manager-and-cluster-issuer").enabled }}
+                    kubernetes.io/tls-acme: "true"
+                    {{- end }}
+                  {{- if .Values.apps.ingress.enabled }}
+                  ingressClassName: nginx-01
+                  {{- end }}
+                  {{- if (index .Values.apps "cert-manager-and-cluster-issuer").enabled }}
+                  tls:
+                  - secretName: minio-api-tls-certificate
+                  {{- end }}
+                {{- end }}
+                
+                {{- if .Values.apps.ingress.enabled }}
+                consoleIngress:
+                  enabled: true
+                  annotations:
+                    nginx.ingress.kubernetes.io/proxy-body-size: 32m
+                    {{- if (index .Values.apps "cert-manager-and-cluster-issuer").enabled }}
+                    kubernetes.io/tls-acme: "true"
+                    {{- end }}
+                  {{- if .Values.apps.ingress.enabled }}
+                  ingressClassName: nginx-01
+                  {{- end }}
+                  {{- if (index .Values.apps "cert-manager-and-cluster-issuer").enabled }}
+                  tls:
+                  - secretName: minio-console-tls-certificate
+                  {{- end }}
+                {{- end }}
+
+                resources:
+                  limits:
+                    cpu: 200m
+                    memory: 256Mi
+                  requests:
+                    cpu: 1m
+                    memory: 1Mi # 16Gi
+
+                # makePolicyJob:
+                #   securityContext:
+                #     enabled: true
+                #   resources:
+                #     limits:
+                #       cpu: 100m
+                #       memory: 256Mi
+                #     requests:
+                #       cpu: 1m
+                #       memory: 1Mi # 128Mi
+                
+                # makeUserJob:
+                #   securityContext:
+                #     enabled: true
+                #   resources:
+                #     limits:
+                #       cpu: 100m
+                #       memory: 256Mi
+                #     requests:
+                #       cpu: 1m
+                #       memory: 1Mi # 128Mi
+                
+                # makeBucketJob:
+                #   securityContext:
+                #     enabled: true
+                #   resources:
+                #     limits:
+                #       cpu: 100m
+                #       memory: 256Mi
+                #     requests:
+                #       cpu: 1m
+                #       memory: 1Mi # 128Mi
+
+                # customCommandJob:
+                #   securityContext:
+                #     enabled: true
+                #     runAsUser: 1000
+                #     runAsGroup: 1000
+                #     fsGroup: 1000
+                #   resources:
+                #     requests:
+                #       memory: 128Mi
+
+                buckets:
+                    # Name of the bucket
+                  - name: loki
+                    # Policy to be set on the
+                    # bucket [none|download|upload|public]
+                    policy: public
+                    # Purge if bucket exists already
+                    purge: true
+                    # set versioning for
+                    versioning: ~ # true, false or ~ (standalone) 
+                    # Name of the bucket
+                  - name: logs
+                    # Policy to be set on the
+                    # bucket [none|download|upload|public]
+                    policy: public
+                    # Purge if bucket exists already
+                    purge: true
+                    # set versioning for
+                    versioning: ~ # true, false or ~ (standalone)
+          ignoreDifferences:
+            - group: apiextensions.k8s.io
+              kind: CustomResourceDefinition
+              jsonPointers:
+                - /status
+            - group: apps
+              kind: Deployment
+              jqPathExpressions:
+                - '.spec.template.spec.containers[]?.resources'

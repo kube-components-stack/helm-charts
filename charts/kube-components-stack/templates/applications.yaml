@@ -1,0 +1,18 @@
+{{- $fullName := include "kube-components-stack.fullname" . }}
+{{- range $app,$data := $.Values.apps }}
+{{- if (index $.Values.apps $app).enabled }}
+{{- $namespace := (index $.Values.apps $app).namespace }}
+{{- range $k, $v := (index $.Values.apps $app).charts }}
+{{- $v := deepCopy $.Values.global.application | merge $v }}
+{{- $_ := set $v.spec "project" $fullName }}
+{{- $_ := set $v.spec.destination "namespace" $namespace }}
+{{- if hasKey $v.spec.source "helm" }}
+{{- if hasKey $v.spec.source.helm "values" }}
+{{- $_ := set $v.spec.source.helm "values" (tpl $v.spec.source.helm.values $) }}
+{{- end }}
+{{- end }}
+---
+{{- toYaml $v }}
+{{- end }}
+{{- end }}
+{{- end }}
