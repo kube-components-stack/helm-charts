@@ -40,34 +40,10 @@ spec:
   {{- end }}
 {{- end }}
   sourceRepos:
-  - https://kube-components-stack.github.io/helm-charts
-{{- if .Values.apps.certificates.enabled }}
-  - https://charts.jetstack.io
-{{- end }}
-{{- if .Values.apps.ingress.enabled }}
-  - https://kubernetes.github.io/ingress-nginx
-{{- end }}
-{{- if .Values.apps.loadBalancing.enabled }}
-  - https://metallb.github.io/metallb
-{{- end }}
-{{- if .Values.apps.logging.enabled }}
-  - https://grafana.github.io/helm-charts
-  - https://helm.vector.dev
-{{- end }}
-{{- if .Values.apps.metrics.enabled }}
-  - https://kubernetes-sigs.github.io/metrics-server
-{{- end }}
-{{- if .Values.apps.monitoring.enabled }}
-  - https://github.com/prometheus-community/helm-charts.git
-  - https://kube-components-stack.github.io/helm-charts
-{{- end }}
-{{- if .Values.apps.mutating.enabled }}
-  - https://github.com/MalibuKoKo/kubemod-helm.git
-  - https://kube-components-stack.github.io/helm-charts
-{{- end }}
-{{- if .Values.apps.notifications.enabled }}
-  - https://argoproj.github.io/argo-helm
-{{- end }}
-{{- if .Values.apps.objectStorage.enabled }}
-  - https://charts.min.io
+{{- range $k_apps, $v_apps := .Values.apps }}
+  {{- if $v_apps.enabled }}
+    {{- range $v_apps.charts }}
+  - {{ .spec.source.repoURL }}
+    {{- end }}
+  {{- end }}
 {{- end }}
