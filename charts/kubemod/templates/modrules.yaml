@@ -6,10 +6,10 @@
 apiVersion: api.kubemod.io/v1beta1
 kind: ModRule
 metadata:
-  name: {{ include "kubemod-with-modrules.fullname" $ }}-{{ .name }}
+  name: {{ include "kubemod.fullname" $ }}-{{ .name }}
   namespace: {{ .namespace }}
   labels:
-    {{- include "kubemod-with-modrules.labels" $ | nindent 4 }}
+    {{- include "kubemod.labels" $ | nindent 4 }}
 spec:
 {{ toYaml .spec | indent 2 }}
 
