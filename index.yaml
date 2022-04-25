@@ -46,6 +46,17 @@ entries:
     urls:
     - https://github.com/kube-components-stack/helm-charts/releases/download/cert-manager-and-cluster-issuer-0.1.0/cert-manager-and-cluster-issuer-0.1.0.tgz
     version: 0.1.0
+  kube-components-stack:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-04-25T09:31:59.628158031Z"
+    description: A Helm chart for Kubernetes
+    digest: 1114979b7262ef0a194e5f5a2b92280f8546e28de3501ab782143dc510694f5c
+    name: kube-components-stack
+    type: application
+    urls:
+    - https://github.com/kube-components-stack/helm-charts/releases/download/kube-components-stack-0.1.0/kube-components-stack-0.1.0.tgz
+    version: 0.1.0
   kube-prometheus-stack:
   - apiVersion: v2
     appVersion: 0.55.0
@@ -108,4 +119,4 @@ entries:
     urls:
     - https://github.com/kube-components-stack/helm-charts/releases/download/kubemod-with-modrules-0.1.0/kubemod-with-modrules-0.1.0.tgz
     version: 0.1.0
-generated: "2022-04-25T09:31:01.679128812Z"
+generated: "2022-04-25T09:31:59.628164731Z"
