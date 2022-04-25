@@ -40,11 +40,15 @@ spec:
 {{- end }}
   destinations:
   - namespace: {{ .Release.Namespace }}
-    server: https://kubernetes.default.svc
+    server: {{ .Values.global.application.spec.destination.server }}
+{{- if .Values.apps.certificates.enabled }}
+  - namespace: kube-system
+    server: {{ .Values.global.application.spec.destination.server }}
+{{- end }}
 {{- range $k, $v := .Values.apps }}
   {{- if $v.enabled }}
   - namespace: {{ $v.namespace }}
-    server: https://kubernetes.default.svc
+    server: {{ $.Values.global.application.spec.destination.server }}
   {{- end }}
 {{- end }}
   sourceRepos:
