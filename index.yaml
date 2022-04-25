@@ -30,22 +30,6 @@ entries:
     urls:
     - https://github.com/kube-components-stack/helm-charts/releases/download/cert-manager-0.1.0/cert-manager-0.1.0.tgz
     version: 0.1.0
-  cert-manager-and-cluster-issuer:
-  - apiVersion: v2
-    appVersion: v1.8.0
-    created: "2022-04-21T16:03:21.127998039Z"
-    dependencies:
-    - condition: cert-manager.enabled
-      name: cert-manager
-      repository: https://charts.jetstack.io
-      version: v1.8.0
-    description: A Helm chart for Kubernetes
-    digest: fbad3e45d5e292066c03a0dbe008acfffebe1ed7926585f2636a72f160a99e69
-    name: cert-manager-and-cluster-issuer
-    type: application
-    urls:
-    - https://github.com/kube-components-stack/helm-charts/releases/download/cert-manager-and-cluster-issuer-0.1.0/cert-manager-and-cluster-issuer-0.1.0.tgz
-    version: 0.1.0
   kube-components-stack:
   - apiVersion: v2
     appVersion: 0.1.0
@@ -72,21 +56,6 @@ entries:
     urls:
     - https://github.com/kube-components-stack/helm-charts/releases/download/kube-prometheus-stack-0.1.0/kube-prometheus-stack-0.1.0.tgz
     version: 0.1.0
-  kube-prometheus-stack-with-grafana-dashboards:
-  - apiVersion: v2
-    appVersion: 0.55.0
-    created: "2022-04-21T16:23:20.478239575Z"
-    dependencies:
-    - name: kube-prometheus-stack
-      repository: https://prometheus-community.github.io/helm-charts
-      version: 34.10.0
-    description: A Helm chart for Kubernetes
-    digest: 69c7d76a9bafb5ca7117afc6a4baa26553f38f90960d5f47bbbf3fba65ae6857
-    name: kube-prometheus-stack-with-grafana-dashboards
-    type: application
-    urls:
-    - https://github.com/kube-components-stack/helm-charts/releases/download/kube-prometheus-stack-with-grafana-dashboards-0.1.0/kube-prometheus-stack-with-grafana-dashboards-0.1.0.tgz
-    version: 0.1.0
   kubemod:
   - apiVersion: v2
     appVersion: 0.15.0
@@ -102,21 +71,5 @@ entries:
     type: application
     urls:
     - https://github.com/kube-components-stack/helm-charts/releases/download/kubemod-0.1.0/kubemod-0.1.0.tgz
-    version: 0.1.0
-  kubemod-with-modrules:
-  - apiVersion: v2
-    appVersion: 0.15.0
-    created: "2022-04-22T01:45:10.425390488Z"
-    dependencies:
-    - condition: kubemod.enabled
-      name: kubemod
-      repository: https://malibukoko.github.io/kubemod-helm
-      version: 0.3.0
-    description: A Helm chart for Kubernetes
-    digest: 4194468e076f77444d5fb9f5673c41a34fc8bc2083425d67356a225aa768b0a1
-    name: kubemod-with-modrules
-    type: application
-    urls:
-    - https://github.com/kube-components-stack/helm-charts/releases/download/kubemod-with-modrules-0.1.0/kubemod-with-modrules-0.1.0.tgz
     version: 0.1.0
 generated: "2022-04-25T09:31:59.628164731Z"
