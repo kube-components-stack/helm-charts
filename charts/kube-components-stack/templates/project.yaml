@@ -47,7 +47,7 @@ spec:
     server: https://kubernetes.default.svc
   {{- end }}
 {{- end }}
-sourceRepos:
-{{- range $sourceRepos | uniq }}
-- {{ . }}
-{{- end }}
+  sourceRepos:
+  {{- range $sourceRepos | uniq }}
+  - {{ . }}
+  {{- end }}
