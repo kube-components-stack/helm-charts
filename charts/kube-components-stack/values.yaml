@@ -122,209 +122,33 @@ apps:
               jqPathExpressions:
                 - .spec.template.metadata.labels."vector.sources.kubernetes-logs/label"
               kind: Deployment
-  # monitoring
-  monitoring:
+  # loadBalancing
+  loadBalancing:
     enabled: true
-    namespace: monitoring
+    namespace: metallb
     charts:
       - metadata:
-          name: kube-prometheus-stack-crd
-          annotations:
-            argocd.argoproj.io/sync-wave: "-1"
-        spec:
-          info:
-            - name: split
-              value: https://github.com/prometheus-operator/prometheus-operator/issues/4439#issuecomment-1030198014
-          source:
-            directory:
-              recurse: true
-            path: charts/kube-prometheus-stack/crds/
-            repoURL: https://github.com/prometheus-community/helm-charts.git
-            targetRevision: kube-prometheus-stack-34.10.0
-          syncPolicy:
-            syncOptions:
-              - Replace=true
-      - metadata:
-          name: kube-prometheus-stack
+          name: metallb
         spec:
           info:
             - name: artifacthub
-              value: https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack
+              value: https://artifacthub.io/packages/helm/metallb/metallb
             - name: values.yaml
-              value: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
-            - name: kube-prometheus-stack-and-argocd-how-workarounds-are-born
-              value: https://blog.ediri.io/kube-prometheus-stack-and-argocd-how-workarounds-are-born
-            - name: grafana
-              value: https://grafana.github.io/helm-charts
-            - name: prometheus-node-exporter
-              value: https://prometheus-community.github.io/helm-charts
-            - name: kube-state-metrics
-              value: https://prometheus-community.github.io/helm-charts
+              value: https://github.com/metallb/metallb/blob/main/charts/metallb/values.yaml
           source:
-            chart: kube-prometheus-stack
-            repoURL: https://kube-components-stack.github.io/helm-charts
-            targetRevision: 0.1.0
+            chart: metallb
+            repoURL: https://metallb.github.io/metallb
+            targetRevision: v0.12.1
             helm:
-              skipCrds: true
               values: |
                 ---
-                kube-prometheus-stack:
-                  {{- if .Values.apps.ingress.enabled }}
-                  alertmanager:
-                    ingress:
-                      enabled: true
-                      ingressClassName: nginx-01
-                      annotations:
-                        {{- if .Values.apps.certificates.enabled }}
-                        kubernetes.io/tls-acme: "true"
-                        {{- end }}
-                        nginx.ingress.kubernetes.io/ssl-redirect: "false"
-                      {{- if .Values.secondLevelDomain }}
-                      hosts:
-                      - alertmanager.{{ .Values.secondLevelDomain }}
-                      {{- end }}
-                      pathType: Prefix
-                      {{- if .Values.apps.certificates.enabled }}
-                      tls:
-                      - secretName: alertmanager-tls-certificate
-                        {{- if .Values.secondLevelDomain }}
-                        hosts:
-                        - alertmanager.{{ .Values.secondLevelDomain }}
-                        {{- end }}
-                      {{- end }}
-                  {{- end }}
-                  grafana:
-                    {{- if .Values.apps.logging.enabled }}
-                    additionalDataSources:
-                    - name: Loki
-                      access: proxy
-                      type: loki
-                      url: http://loki-distributed-gateway.{{ .Values.apps.logging.namespace }}.svc.cluster.local
-                      version: 1
-                    {{- end }}
-                    {{- if .Values.apps.ingress.enabled }}
-                    ingress:
-                      enabled: true
-                      ingressClassName: nginx-01
-                      annotations:
-                        {{- if .Values.apps.certificates.enabled }}
-                        kubernetes.io/tls-acme: "true"
-                        {{- end }}
-                        nginx.ingress.kubernetes.io/ssl-redirect: "false"
-                      {{- if .Values.secondLevelDomain }}
-                      hosts:
-                      - grafana.{{ .Values.secondLevelDomain }}
-                      {{- end }}
-                      pathType: Prefix
-                      {{- if .Values.apps.certificates.enabled }}
-                      tls:
-                      - secretName: grafana-tls-certificate
-                        {{- if .Values.secondLevelDomain }}
-                        hosts:
-                        - grafana.{{ .Values.secondLevelDomain }}
-                        {{- end }}
-                      {{- end }}
-                    {{- end }}
-                    plugins:
-                    - grafana-piechart-panel
-                    - grafana-worldmap-panel
-                  {{- if .Values.apps.ingress.enabled }}
-                  prometheus:
-                    ingress:
-                      enabled: true
-                      ingressClassName: nginx-01
-                      annotations:
-                        {{- if .Values.apps.certificates.enabled }}
-                        kubernetes.io/tls-acme: "true"
-                        {{- end }}
-                        nginx.ingress.kubernetes.io/ssl-redirect: "false"
-                      {{- if .Values.secondLevelDomain }}
-                      hosts:
-                      - prometheus.{{ .Values.secondLevelDomain }}
-                      {{- end }}
-                      pathType: Prefix
-                      {{- if .Values.apps.certificates.enabled }}
-                      tls:
-                      - secretName: prometheus-tls-certificate
-                        {{- if .Values.secondLevelDomain }}
-                        hosts:
-                        - prometheus.{{ .Values.secondLevelDomain }}
-                        {{- end }}
-                      {{- end }}
-                  {{- end }}
-
-          ignoreDifferences:
-          - group: apiextensions.k8s.io
-            kind: CustomResourceDefinition
-            jsonPointers:
-            - /status
-          - group: apps
-            kind: Deployment
-            jqPathExpressions:
-            - '.spec.template.spec.containers[]?.securityContext'
-
-  # mutating
-  mutating:
-    enabled: true
-    namespace: kubemod-system
-    protectedNamespaces:
-      - kube-system
-      - kubemod-system
-    charts:
-      - metadata:
-          name: kubemod-crd
-        spec:
-          source:
-            repoURL: https://github.com/kubemod/kubemod-helm.git
-            path: helm-chart/kubemod/crds/
-            targetRevision: kubemod-0.3.0
-            directory:
-              recurse: true
-          syncPolicy:
-            syncOptions:
-              - Replace=true
-      - metadata:
-          name: kubemod
-        spec:
-          info:
-          - name: artifacthub
-            value: https://artifacthub.io/packages/helm/kubmod/kubemod
-          - name: values.yaml
-            value: https://github.com/kubemod/kubemod-helm/blob/main/helm-chart/kubemod/values.yaml
-          - name: table-of-contents
-            value: https://github.com/kubemod/kubemod#table-of-contents
-          - name: JSONPath
-            value: https://github.com/kubemod/kubemod#kubemods-version-of-jsonpath
-          source:
-            chart: kubemod
-            repoURL: https://kube-components-stack.github.io/helm-charts
-            targetRevision: 0.1.0
-            helm:
-              releaseName: kubemod
-              skipCrds: true
-              values: |
-                ---
-                certificate:
-                  issuerRef:
-                    kind: ClusterIssuer
-                    name: selfsigned-cluster-issuer
-  # notifications
-  notifications:
-    enabled: true
-    namespace: argocd
-    charts:
-      - metadata:
-          name: argocd-notifications
-        spec:
-          info:
-            - name: artifacthub
-              value: https://artifacthub.io/packages/helm/argo/argocd-notifications
-            - name: values.yaml
-              value: https://github.com/argoproj/argo-helm/blob/master/charts/argocd-notifications/values.yaml
-          source:
-            chart: argocd-notifications
-            repoURL: https://kube-components-stack.github.io/helm-charts
-            targetRevision: 0.1.0
+                ## configInline specifies MetalLB's configuration directly, in yaml format. When configInline is used, Helm manages MetalLB's
+                ## configuration ConfigMap as part of the release, and existingConfigMap is ignored.
+                ## Refer to https://metallb.universe.tf/configuration/ for available options.
+                configInline:
+                  address-pools:
+                  - name: default
+                    protocol: layer2
   # logging
   logging:
     enabled: true
@@ -521,34 +345,7 @@ apps:
                       encoding:
                         codec: ndjson
                     {{- end }}
-  # loadBalancing
-  loadBalancing:
-    enabled: true
-    namespace: metallb
-    charts:
-      - metadata:
-          name: metallb
-        spec:
-          info:
-            - name: artifacthub
-              value: https://artifacthub.io/packages/helm/metallb/metallb
-            - name: values.yaml
-              value: https://github.com/metallb/metallb/blob/main/charts/metallb/values.yaml
-          source:
-            chart: metallb
-            repoURL: https://metallb.github.io/metallb
-            targetRevision: v0.12.1
-            helm:
-              values: |
-                ---
-                ## configInline specifies MetalLB's configuration directly, in yaml format. When configInline is used, Helm manages MetalLB's
-                ## configuration ConfigMap as part of the release, and existingConfigMap is ignored.
-                ## Refer to https://metallb.universe.tf/configuration/ for available options.
-                configInline:
-                  address-pools:
-                  - name: default
-                    protocol: layer2
-  # metrics
+# metrics
   metrics:
     enabled: true
     namespace: kube-system
@@ -589,6 +386,208 @@ apps:
             jqPathExpressions:
             - '.spec.template.spec.containers[]?.resources'
             - '.spec.template.spec.securityContext.runAsNonRoot'
+  # monitoring
+  monitoring:
+    enabled: true
+    namespace: monitoring
+    charts:
+      - metadata:
+          name: kube-prometheus-stack-crd
+          annotations:
+            argocd.argoproj.io/sync-wave: "-1"
+        spec:
+          info:
+            - name: split
+              value: https://github.com/prometheus-operator/prometheus-operator/issues/4439#issuecomment-1030198014
+          source:
+            directory:
+              recurse: true
+            path: charts/kube-prometheus-stack/crds/
+            repoURL: https://github.com/prometheus-community/helm-charts.git
+            targetRevision: kube-prometheus-stack-34.10.0
+          syncPolicy:
+            syncOptions:
+              - Replace=true
+      - metadata:
+          name: kube-prometheus-stack
+        spec:
+          info:
+            - name: artifacthub
+              value: https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack
+            - name: values.yaml
+              value: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+            - name: kube-prometheus-stack-and-argocd-how-workarounds-are-born
+              value: https://blog.ediri.io/kube-prometheus-stack-and-argocd-how-workarounds-are-born
+            - name: grafana
+              value: https://grafana.github.io/helm-charts
+            - name: prometheus-node-exporter
+              value: https://prometheus-community.github.io/helm-charts
+            - name: kube-state-metrics
+              value: https://prometheus-community.github.io/helm-charts
+          source:
+            chart: kube-prometheus-stack
+            repoURL: https://kube-components-stack.github.io/helm-charts
+            targetRevision: 0.1.0
+            helm:
+              skipCrds: true
+              values: |
+                ---
+                kube-prometheus-stack:
+                  {{- if .Values.apps.ingress.enabled }}
+                  alertmanager:
+                    ingress:
+                      enabled: true
+                      ingressClassName: nginx-01
+                      annotations:
+                        {{- if .Values.apps.certificates.enabled }}
+                        kubernetes.io/tls-acme: "true"
+                        {{- end }}
+                        nginx.ingress.kubernetes.io/ssl-redirect: "false"
+                      {{- if .Values.secondLevelDomain }}
+                      hosts:
+                      - alertmanager.{{ .Values.secondLevelDomain }}
+                      {{- end }}
+                      pathType: Prefix
+                      {{- if .Values.apps.certificates.enabled }}
+                      tls:
+                      - secretName: alertmanager-tls-certificate
+                        {{- if .Values.secondLevelDomain }}
+                        hosts:
+                        - alertmanager.{{ .Values.secondLevelDomain }}
+                        {{- end }}
+                      {{- end }}
+                  {{- end }}
+                  grafana:
+                    {{- if .Values.apps.logging.enabled }}
+                    additionalDataSources:
+                    - name: Loki
+                      access: proxy
+                      type: loki
+                      url: http://loki-distributed-gateway.{{ .Values.apps.logging.namespace }}.svc.cluster.local
+                      version: 1
+                    {{- end }}
+                    {{- if .Values.apps.ingress.enabled }}
+                    ingress:
+                      enabled: true
+                      ingressClassName: nginx-01
+                      annotations:
+                        {{- if .Values.apps.certificates.enabled }}
+                        kubernetes.io/tls-acme: "true"
+                        {{- end }}
+                        nginx.ingress.kubernetes.io/ssl-redirect: "false"
+                      {{- if .Values.secondLevelDomain }}
+                      hosts:
+                      - grafana.{{ .Values.secondLevelDomain }}
+                      {{- end }}
+                      pathType: Prefix
+                      {{- if .Values.apps.certificates.enabled }}
+                      tls:
+                      - secretName: grafana-tls-certificate
+                        {{- if .Values.secondLevelDomain }}
+                        hosts:
+                        - grafana.{{ .Values.secondLevelDomain }}
+                        {{- end }}
+                      {{- end }}
+                    {{- end }}
+                    plugins:
+                    - grafana-piechart-panel
+                    - grafana-worldmap-panel
+                  {{- if .Values.apps.ingress.enabled }}
+                  prometheus:
+                    ingress:
+                      enabled: true
+                      ingressClassName: nginx-01
+                      annotations:
+                        {{- if .Values.apps.certificates.enabled }}
+                        kubernetes.io/tls-acme: "true"
+                        {{- end }}
+                        nginx.ingress.kubernetes.io/ssl-redirect: "false"
+                      {{- if .Values.secondLevelDomain }}
+                      hosts:
+                      - prometheus.{{ .Values.secondLevelDomain }}
+                      {{- end }}
+                      pathType: Prefix
+                      {{- if .Values.apps.certificates.enabled }}
+                      tls:
+                      - secretName: prometheus-tls-certificate
+                        {{- if .Values.secondLevelDomain }}
+                        hosts:
+                        - prometheus.{{ .Values.secondLevelDomain }}
+                        {{- end }}
+                      {{- end }}
+                  {{- end }}
+
+          ignoreDifferences:
+          - group: apiextensions.k8s.io
+            kind: CustomResourceDefinition
+            jsonPointers:
+            - /status
+          - group: apps
+            kind: Deployment
+            jqPathExpressions:
+            - '.spec.template.spec.containers[]?.securityContext'
+  # mutating
+  mutating:
+    enabled: true
+    namespace: kubemod-system
+    protectedNamespaces:
+      - kube-system
+      - kubemod-system
+    charts:
+      - metadata:
+          name: kubemod-crd
+        spec:
+          source:
+            repoURL: https://github.com/kubemod/kubemod-helm.git
+            path: helm-chart/kubemod/crds/
+            targetRevision: kubemod-0.3.0
+            directory:
+              recurse: true
+          syncPolicy:
+            syncOptions:
+              - Replace=true
+      - metadata:
+          name: kubemod
+        spec:
+          info:
+          - name: artifacthub
+            value: https://artifacthub.io/packages/helm/kubmod/kubemod
+          - name: values.yaml
+            value: https://github.com/kubemod/kubemod-helm/blob/main/helm-chart/kubemod/values.yaml
+          - name: table-of-contents
+            value: https://github.com/kubemod/kubemod#table-of-contents
+          - name: JSONPath
+            value: https://github.com/kubemod/kubemod#kubemods-version-of-jsonpath
+          source:
+            chart: kubemod
+            repoURL: https://kube-components-stack.github.io/helm-charts
+            targetRevision: 0.1.0
+            helm:
+              releaseName: kubemod
+              skipCrds: true
+              values: |
+                ---
+                certificate:
+                  issuerRef:
+                    kind: ClusterIssuer
+                    name: selfsigned-cluster-issuer
+  # notifications
+  notifications:
+    enabled: true
+    namespace: argocd
+    charts:
+      - metadata:
+          name: argocd-notifications
+        spec:
+          info:
+            - name: artifacthub
+              value: https://artifacthub.io/packages/helm/argo/argocd-notifications
+            - name: values.yaml
+              value: https://github.com/argoproj/argo-helm/blob/master/charts/argocd-notifications/values.yaml
+          source:
+            chart: argocd-notifications
+            repoURL: https://kube-components-stack.github.io/helm-charts
+            targetRevision: 0.1.0
   # objectStorage
   objectStorage:
     enabled: true
