@@ -10,6 +10,9 @@
 {{- if hasKey $v.spec.source.helm "values" }}
 {{- $_ := set $v.spec.source.helm "values" (tpl $v.spec.source.helm.values $) }}
 {{- end }}
+{{- if hasKey $v.spec.source.helm "parameters" }}
+{{- $_ := set $v.spec.source.helm "parameters" $v.spec.source.helm.parameters }}
+{{- end }}
 {{- end }}
 ---
 {{- toYaml $v }}

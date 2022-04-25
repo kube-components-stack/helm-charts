@@ -27,7 +27,6 @@ global:
       finalizers:
         - resources-finalizer.argocd.argoproj.io
     spec:
-      project: ""
       info: []
       source: {}
       destination:
