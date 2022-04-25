@@ -5,7 +5,7 @@ kind: AppProject
 metadata:
   name: {{ include "kube-components-stack.fullname" . }}
   annotations:
-    helm.sh/hook-weight:.-1
+    helm.sh/hook-weight: "-1"
 spec:
   clusterResourceWhitelist:
   - group: admissionregistration.k8s.io
