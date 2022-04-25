@@ -2,6 +2,20 @@ apiVersion: v1
 entries:
   argocd-notifications:
   - apiVersion: v2
+    appVersion: v1.2.1
+    created: "2022-04-25T12:03:26.016551363Z"
+    dependencies:
+    - name: argocd-notifications
+      repository: https://argoproj.github.io/argo-helm
+      version: 1.8.0
+    description: A Helm chart for Kubernetes
+    digest: a76de8604b766ae0d2b116b239489d95c70eec554887dedfc31e67effbab7f2e
+    name: argocd-notifications
+    type: application
+    urls:
+    - https://github.com/kube-components-stack/helm-charts/releases/download/argocd-notifications-0.1.1/argocd-notifications-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
     appVersion: 0.1.0
     created: "2022-04-25T09:31:01.679115712Z"
     dependencies:
@@ -31,6 +45,16 @@ entries:
     - https://github.com/kube-components-stack/helm-charts/releases/download/cert-manager-0.1.0/cert-manager-0.1.0.tgz
     version: 0.1.0
   kube-components-stack:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2022-04-25T12:03:26.23552909Z"
+    description: A Helm chart for Kubernetes
+    digest: d242e29f0a8afd0a40c2780f4a1d7e2535c5cd1ff223667762cf35275c1848c2
+    name: kube-components-stack
+    type: application
+    urls:
+    - https://github.com/kube-components-stack/helm-charts/releases/download/kube-components-stack-0.1.1/kube-components-stack-0.1.1.tgz
+    version: 0.1.1
   - apiVersion: v2
     appVersion: 0.1.0
     created: "2022-04-25T09:31:59.628158031Z"
@@ -72,4 +96,4 @@ entries:
     urls:
     - https://github.com/kube-components-stack/helm-charts/releases/download/kubemod-0.1.0/kubemod-0.1.0.tgz
     version: 0.1.0
-generated: "2022-04-25T09:31:59.628164731Z"
+generated: "2022-04-25T12:03:26.235555091Z"
