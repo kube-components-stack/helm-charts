@@ -1,4 +1,12 @@
 # https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#projects
+{{- $sourceRepos := list }}
+{{- range $k, $v := .Values.apps }}
+  {{- if $v.enabled }}
+    {{- range $key, $values := $v.charts }}
+      {{- $sourceRepos = append $sourceRepos .spec.source.repoURL }}
+    {{- end }}
+  {{- end }}
+{{- end }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
@@ -39,11 +47,7 @@ spec:
     server: https://kubernetes.default.svc
   {{- end }}
 {{- end }}
-  sourceRepos:
-{{- range $k, $v := .Values.apps }}
-  {{- if $v.enabled }}
-    {{- range $v.charts }}
-  - {{ .spec.source.repoURL }}
-    {{- end }}
-  {{- end }}
+sourceRepos:
+{{- range $sourceRepos | uniq }}
+- {{ . }}
 {{- end }}
