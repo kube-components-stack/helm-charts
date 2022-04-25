@@ -59,7 +59,8 @@ apps:
     enabled: true
     namespace: cert-manager
     charts:
-      - metadata:
+      cert-manager:
+        metadata:
           name: cert-manager
         spec:
           info:
@@ -76,7 +77,8 @@ apps:
     enabled: true
     namespace: ingress-nginx
     charts:
-      - metadata:
+      ingress-nginx:
+        metadata:
           name: ingress-nginx
         spec:
           info:
@@ -126,7 +128,8 @@ apps:
     enabled: true
     namespace: metallb
     charts:
-      - metadata:
+      metallb:
+        metadata:
           name: metallb
         spec:
           info:
@@ -153,7 +156,8 @@ apps:
     enabled: true
     namespace: logging
     charts:
-      - metadata:
+      lokiDistributed:
+        metadata:
           name: loki-distributed
         spec:
           info:
@@ -230,7 +234,8 @@ apps:
                   affinity: ~
                 memcachedIndexWrites:
                   affinity: ~
-      - metadata:
+      promtail:
+        metadata:
           name: promtail
         spec:
           info:
@@ -249,7 +254,8 @@ apps:
                   enabled: true
                   labels:
                     release: kube-prometheus-stack
-      - metadata:
+      vector:
+        metadata:
           name: vector
         spec:
           info:
@@ -349,7 +355,8 @@ apps:
     enabled: true
     namespace: kube-system
     charts:
-      - metadata:
+      metricsServer:
+        metadata:
           name: metrics-server
         spec:
           info:
@@ -390,7 +397,8 @@ apps:
     enabled: true
     namespace: monitoring
     charts:
-      - metadata:
+      kubePrometheusStackCrd:
+        metadata:
           name: kube-prometheus-stack-crd
           annotations:
             argocd.argoproj.io/sync-wave: "-1"
@@ -407,7 +415,8 @@ apps:
           syncPolicy:
             syncOptions:
               - Replace=true
-      - metadata:
+      kubePrometheusStack:
+        metadata:
           name: kube-prometheus-stack
         spec:
           info:
@@ -533,7 +542,8 @@ apps:
       - kube-system
       - kubemod-system
     charts:
-      - metadata:
+      kubemodCrd:
+        metadata:
           name: kubemod-crd
         spec:
           source:
@@ -545,7 +555,8 @@ apps:
           syncPolicy:
             syncOptions:
               - Replace=true
-      - metadata:
+      kubemod:
+        metadata:
           name: kubemod
         spec:
           info:
@@ -575,7 +586,8 @@ apps:
     enabled: true
     namespace: argocd
     charts:
-      - metadata:
+      argocdNotifications:
+        metadata:
           name: argocd-notifications
         spec:
           info:
@@ -592,7 +604,8 @@ apps:
     enabled: true
     namespace: minio
     charts:
-      - metadata:
+      minio:
+        metadata:
           name: minio
         spec:
           info:
