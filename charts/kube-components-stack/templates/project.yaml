@@ -40,9 +40,9 @@ spec:
   {{- end }}
 {{- end }}
   sourceRepos:
-{{- range $k_apps, $v_apps := .Values.apps }}
-  {{- if $v_apps.enabled }}
-    {{- range $v_apps.charts }}
+{{- range $k, $v := .Values.apps }}
+  {{- if $v.enabled }}
+    {{- range $v.charts }}
   - {{ .spec.source.repoURL }}
     {{- end }}
   {{- end }}
