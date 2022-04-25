@@ -7,6 +7,16 @@
     {{- end }}
   {{- end }}
 {{- end }}
+{{- $namespaces := list }}
+{{- range $k, $v := .Values.apps }}
+  {{- if $v.enabled }}
+    {{- $namespaces = append $namespaces $v.namespace }}
+  {{- end }}
+{{- end }}
+{{- $namespaces = append $namespaces .Release.Namespace }}
+{{- if .Values.apps.certificates.enabled }}
+{{- $namespaces = append $namespaces "kube-system" }}
+{{- end }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
@@ -39,18 +49,10 @@ spec:
     kind: ClusterIssuer
 {{- end }}
   destinations:
-  - namespace: {{ .Release.Namespace }}
-    server: {{ .Values.global.application.spec.destination.server }}
-{{- if .Values.apps.certificates.enabled }}
-  - namespace: kube-system
-    server: {{ .Values.global.application.spec.destination.server }}
-{{- end }}
-{{- range $k, $v := .Values.apps }}
-  {{- if $v.enabled }}
-  - namespace: {{ $v.namespace }}
+  {{- range $namespaces | uniq }}
+  - namespace: {{ . }}
     server: {{ $.Values.global.application.spec.destination.server }}
   {{- end }}
-{{- end }}
   sourceRepos:
   {{- range $sourceRepos | uniq }}
   - {{ . }}
