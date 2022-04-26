@@ -53,6 +53,10 @@ global:
         kind: CustomResourceDefinition
         jsonPointers:
         - /status
+      - group: apps
+        kind: Deployment
+        jqPathExpressions:
+        - '.spec.template.spec.containers[]?.securityContext'
 apps:
   # certificates
   certificates:
