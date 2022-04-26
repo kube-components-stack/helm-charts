@@ -637,13 +637,13 @@ apps:
                   enabled: true
                   annotations:
                     nginx.ingress.kubernetes.io/proxy-body-size: 32m
-                    {{- if (index .Values.apps "cert-manager-and-cluster-issuer").enabled }}
+                    {{- if .Values.apps.ingress.enabled.enabled }}
                     kubernetes.io/tls-acme: "true"
                     {{- end }}
                   {{- if .Values.apps.ingress.enabled }}
                   ingressClassName: nginx-01
                   {{- end }}
-                  {{- if (index .Values.apps "cert-manager-and-cluster-issuer").enabled }}
+                  {{- if .Values.apps.ingress.enabled.enabled }}
                   tls:
                   - secretName: minio-api-tls-certificate
                   {{- end }}
@@ -654,13 +654,13 @@ apps:
                   enabled: true
                   annotations:
                     nginx.ingress.kubernetes.io/proxy-body-size: 32m
-                    {{- if (index .Values.apps "cert-manager-and-cluster-issuer").enabled }}
+                    {{- if .Values.apps.ingress.enabled.enabled }}
                     kubernetes.io/tls-acme: "true"
                     {{- end }}
                   {{- if .Values.apps.ingress.enabled }}
                   ingressClassName: nginx-01
                   {{- end }}
-                  {{- if (index .Values.apps "cert-manager-and-cluster-issuer").enabled }}
+                  {{- if .Values.apps.ingress.enabled.enabled }}
                   tls:
                   - secretName: minio-console-tls-certificate
                   {{- end }}
