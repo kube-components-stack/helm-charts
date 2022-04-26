@@ -56,7 +56,7 @@ global:
 apps:
   # certificates
   certificates:
-    enabled: false
+    enabled: true
     namespace: cert-manager
     charts:
       certManager:
@@ -74,7 +74,7 @@ apps:
             targetRevision: 0.1.0
   # ingress
   ingress:
-    enabled: false
+    enabled: true
     namespace: ingress-nginx
     ingressClassName: nginx-01
     charts:
@@ -126,7 +126,7 @@ apps:
               kind: Deployment
   # loadBalancing
   loadBalancing:
-    enabled: false
+    enabled: true
     namespace: metallb
     charts:
       metallb:
@@ -154,7 +154,7 @@ apps:
                     protocol: layer2
   # logging
   logging:
-    enabled: false
+    enabled: true
     namespace: logging
     charts:
       lokiDistributed:
@@ -353,7 +353,7 @@ apps:
                     {{- end }}
 # metrics
   metrics:
-    enabled: false
+    enabled: true
     namespace: kube-system
     charts:
       metricsServer:
@@ -529,7 +529,7 @@ apps:
             - '.spec.template.spec.containers[]?.securityContext'
   # mutating
   mutating:
-    enabled: false
+    enabled: true
     namespace: kubemod-system
     protectedNamespaces:
       - kube-system
@@ -576,7 +576,7 @@ apps:
                     name: selfsigned-cluster-issuer
   # notifications
   notifications:
-    enabled: false
+    enabled: true
     namespace: argocd
     charts:
       argocdNotifications:
@@ -594,7 +594,7 @@ apps:
             targetRevision: 0.1.1
   # objectStorage
   objectStorage:
-    enabled: false
+    enabled: true
     namespace: minio
     charts:
       minio:
@@ -636,6 +636,10 @@ apps:
                   {{- if .Values.apps.ingress.enabled }}
                   ingressClassName: {{ .Values.apps.ingress.ingressClassName }}
                   {{- end }}
+                  {{- if .Values.secondLevelDomain }}
+                  hosts:
+                  - minio-api.{{ .Values.secondLevelDomain }}
+                  {{- end }}
                   {{- if .Values.apps.certificates.enabled }}
                   tls:
                   - secretName: minio-api-tls-certificate
@@ -657,6 +661,10 @@ apps:
                   {{- if .Values.apps.ingress.enabled }}
                   ingressClassName: {{ .Values.apps.ingress.ingressClassName }}
                   {{- end }}
+                  {{- if .Values.secondLevelDomain }}
+                  hosts:
+                  - minio-console.{{ .Values.secondLevelDomain }}
+                  {{- end }}
                   {{- if .Values.apps.certificates.enabled }}
                   tls:
                   - secretName: minio-console-tls-certificate
@@ -666,77 +674,6 @@ apps:
                     {{- end }}
                   {{- end }}
                 {{- end }}
-
-                resources:
-                  limits:
-                    cpu: 200m
-                    memory: 256Mi
-                  requests:
-                    cpu: 1m
-                    memory: 1Mi # 16Gi
-
-                # makePolicyJob:
-                #   securityContext:
-                #     enabled: true
-                #   resources:
-                #     limits:
-                #       cpu: 100m
-                #       memory: 256Mi
-                #     requests:
-                #       cpu: 1m
-                #       memory: 1Mi # 128Mi
-                
-                # makeUserJob:
-                #   securityContext:
-                #     enabled: true
-                #   resources:
-                #     limits:
-                #       cpu: 100m
-                #       memory: 256Mi
-                #     requests:
-                #       cpu: 1m
-                #       memory: 1Mi # 128Mi
-                
-                # makeBucketJob:
-                #   securityContext:
-                #     enabled: true
-                #   resources:
-                #     limits:
-                #       cpu: 100m
-                #       memory: 256Mi
-                #     requests:
-                #       cpu: 1m
-                #       memory: 1Mi # 128Mi
-
-                # customCommandJob:
-                #   securityContext:
-                #     enabled: true
-                #     runAsUser: 1000
-                #     runAsGroup: 1000
-                #     fsGroup: 1000
-                #   resources:
-                #     requests:
-                #       memory: 128Mi
-
-                buckets:
-                    # Name of the bucket
-                  - name: loki
-                    # Policy to be set on the
-                    # bucket [none|download|upload|public]
-                    policy: public
-                    # Purge if bucket exists already
-                    purge: true
-                    # set versioning for
-                    versioning: ~ # true, false or ~ (standalone) 
-                    # Name of the bucket
-                  - name: logs
-                    # Policy to be set on the
-                    # bucket [none|download|upload|public]
-                    policy: public
-                    # Purge if bucket exists already
-                    purge: true
-                    # set versioning for
-                    versioning: ~ # true, false or ~ (standalone)
           ignoreDifferences:
             - group: apiextensions.k8s.io
               kind: CustomResourceDefinition
