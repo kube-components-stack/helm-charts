@@ -1,4 +1,3 @@
-# https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#projects
 {{- $sourceRepos := list }}
 {{- range $k, $v := .Values.apps }}
   {{- if $v.enabled }}
@@ -18,6 +17,7 @@
 {{- $namespaces = append $namespaces "kube-system" }}
 {{- end }}
 ---
+# https://argo-cd.readthedocs.io/en/stable/operator-manual/declarative-setup/#projects
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:

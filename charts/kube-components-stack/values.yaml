@@ -436,7 +436,7 @@ apps:
           source:
             chart: kube-prometheus-stack
             repoURL: https://kube-components-stack.github.io/helm-charts
-            targetRevision: 0.1.0
+            targetRevision: 0.1.1
             helm:
               skipCrds: true
               values: |
@@ -502,9 +502,6 @@ apps:
                         {{- end }}
                       {{- end }}
                     {{- end }}
-                    plugins:
-                    - grafana-piechart-panel
-                    - grafana-worldmap-panel
                   {{- if .Values.apps.ingress.enabled }}
                   prometheus:
                     ingress:
