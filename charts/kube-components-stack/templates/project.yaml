@@ -13,7 +13,7 @@
   {{- end }}
 {{- end }}
 {{- $namespaces = append $namespaces .Release.Namespace }}
-{{- if .Values.apps.certificates.enabled }}
+{{- if or .Values.apps.certificates.enabled .Values.apps.monitoring.enabled }}
 {{- $namespaces = append $namespaces "kube-system" }}
 {{- end }}
 ---
