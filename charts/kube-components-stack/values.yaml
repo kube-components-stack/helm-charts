@@ -57,6 +57,7 @@ global:
         kind: Deployment
         jqPathExpressions:
         - '.spec.template.spec.containers[]?.securityContext'
+        - '.spec.template.spec.containers[]?.resources'
 apps:
   # certificates
   certificates:
@@ -522,15 +523,6 @@ apps:
                         {{- end }}
                       {{- end }}
                 {{- end }}
-          ignoreDifferences:
-          - group: apiextensions.k8s.io
-            kind: CustomResourceDefinition
-            jsonPointers:
-            - /status
-          - group: apps
-            kind: Deployment
-            jqPathExpressions:
-            - '.spec.template.spec.containers[]?.securityContext'
   # mutating
   mutating:
     enabled: true
@@ -653,7 +645,7 @@ apps:
                     {{- end }}
                   {{- end }}
                 {{- end }}
-                
+
                 {{- if .Values.apps.ingress.enabled }}
                 consoleIngress:
                   enabled: true
@@ -678,12 +670,3 @@ apps:
                     {{- end }}
                   {{- end }}
                 {{- end }}
-          ignoreDifferences:
-            - group: apiextensions.k8s.io
-              kind: CustomResourceDefinition
-              jsonPointers:
-                - /status
-            - group: apps
-              kind: Deployment
-              jqPathExpressions:
-                - '.spec.template.spec.containers[]?.resources'
