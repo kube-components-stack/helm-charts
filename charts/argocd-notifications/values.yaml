@@ -13,7 +13,7 @@ argocd-notifications:
   logLevel: debug # info # warning # debug
   notifiers:
     service.slack: |
-      devops-slack: $devops-slack
+      token: $devops-slack
     service.teams: |
       recipientUrls:
         devops-teams: $devops-teams
