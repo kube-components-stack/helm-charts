@@ -3,6 +3,20 @@ entries:
   argocd-notifications:
   - apiVersion: v2
     appVersion: v1.2.1
+    created: "2022-04-26T22:49:29.473260487Z"
+    dependencies:
+    - name: argocd-notifications
+      repository: https://argoproj.github.io/argo-helm
+      version: 1.8.0
+    description: A Helm chart for Kubernetes
+    digest: 35380ac59666b7a098f86f97f910b7adec5bceabe939ea6bc84f183fb2967014
+    name: argocd-notifications
+    type: application
+    urls:
+    - https://github.com/kube-components-stack/helm-charts/releases/download/argocd-notifications-0.1.2/argocd-notifications-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
+    appVersion: v1.2.1
     created: "2022-04-25T12:03:26.016551363Z"
     dependencies:
     - name: argocd-notifications
@@ -280,4 +294,4 @@ entries:
     urls:
     - https://github.com/kube-components-stack/helm-charts/releases/download/kubemod-0.1.0/kubemod-0.1.0.tgz
     version: 0.1.0
-generated: "2022-04-26T16:33:09.225354721Z"
+generated: "2022-04-26T22:49:29.473354094Z"
