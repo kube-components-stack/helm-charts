@@ -6,14 +6,14 @@ priorityClassName: ""
 imagePullSecrets: []
 job:
   # Deploy the kubectl job
-  enabled: false
+  enabled: true
   image:
     repository: bitnami/kubectl
     pullPolicy: Always # Always or IfNotPresent
     tag: "1.23"
 serviceAccount:
   # Specifies whether a service account should be created
-  create: false
+  create: true
   # Annotations to add to the service account
   annotations: {}
   # The name of the service account to use.
@@ -294,7 +294,12 @@ apps:
                   enabled: false
                 data_dir: /vector-data-dir
 
-                # Agent, Aggregator, Stateless-Aggregator
+                # role -- Role for this Vector (possible values: Agent, Aggregator, Stateless-Aggregator)
+                ## Ref: https://vector.dev/docs/setup/deployment/roles/
+                ## Each role is created with the following workloads:
+                ## Agent - DaemonSet
+                ## Aggregator - StatefulSet
+                ## Stateless-Aggregator - Deployment
                 role: Agent
                 
                 # https://vector.dev/docs/setup/installation/platforms/kubernetes/#agent-resource-limits
