@@ -46,6 +46,7 @@ global:
           - Validate=false
           - CreateNamespace=true
           - ApplyOutOfSyncOnly=true
+          - RespectIgnoreDifferences=true
         # - PrunePropagationPolicy=foreground
         # - PruneLast=true
       ignoreDifferences:
@@ -181,7 +182,7 @@ apps:
               values: |
                 ---
                 serviceMonitor:
-                  enabled: true
+                  enabled: {{ if .Values.apps.monitoring.enabled }}true{{ else }}false{{ end }}
                   labels:
                     release: kube-prometheus-stack
                 loki:
@@ -247,6 +248,8 @@ apps:
           info:
             - name: artifacthub
               value: https://artifacthub.io/packages/helm/grafana/promtail
+            - name: values.yaml
+              value: https://github.com/grafana/helm-charts/blob/main/charts/promtail/values.yaml
           source:
             chart: promtail
             repoURL: https://grafana.github.io/helm-charts
@@ -257,7 +260,7 @@ apps:
                 config:
                   lokiAddress: http://loki-distributed-gateway.{{ .Values.apps.logging.namespace }}.svc.cluster.local/loki/api/v1/push
                 serviceMonitor:
-                  enabled: true
+                  enabled: {{ if .Values.apps.monitoring.enabled }}true{{ else }}false{{ end }}
                   labels:
                     release: kube-prometheus-stack
       vector:
@@ -339,13 +342,6 @@ apps:
                           parse_regex!(.message, r'^(?P<nginx_remote_addr>\S+) - (?P<nginx_remote_user>\S+) \[(?P<nginx_time_local>[^\]]+)\] "(?P<nginx_request>[^"]+)" (?P<nginx_status>\d+) (?P<nginx_body_bytes_sent>\d+) "(?P<nginx_http_referer>[^"]+)" "(?P<nginx_http_user_agent>[^"]+)" (?P<nginx_request_length>\d+) (?P<nginx_request_time>\d+\.\d+) \[(?P<nginx_proxy_upstream_name>[^\]]*)\] \[(?P<nginx_proxy_alternative_upstream_name>[^\]]*)\] (?P<nginx_upstream_addr>[0-9\.a-z/]+:[0-9\.a-z/]+(?:, [0-9\.a-z/]+:[0-9\.a-z/]+)*) (?P<nginx_upstream_response_length>\d+(?:, \d+)*) (?P<nginx_upstream_response_time>\d+\.\d+(?:, \d+\.\d+)*) (?P<nginx_upstream_status>(?:\d+|-)(?:, (?:\d+|-))*) (?P<nginx_req_id>\S+)$')
                         . = merge(., structured)
                   sinks:
-                    # debug:
-                    #   type: console
-                    #   inputs:
-                    #     - parse_log_ingress_nginx
-                    #   target: stdout
-                    #   encoding:
-                    #     codec: json
                     {{- if .Values.apps.objectStorage.enabled }}
                     minio:
                       type: aws_s3
@@ -360,6 +356,14 @@ apps:
                       compression: gzip
                       encoding:
                         codec: ndjson
+                    {{- else }}
+                    debug:
+                      type: console
+                      inputs:
+                        - parse_log_ingress_nginx
+                      target: stdout
+                      encoding:
+                        codec: json
                     {{- end }}
 # metrics
   metrics:
