@@ -441,12 +441,21 @@ apps:
               value: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
             - name: kube-prometheus-stack-and-argocd-how-workarounds-are-born
               value: https://blog.ediri.io/kube-prometheus-stack-and-argocd-how-workarounds-are-born
+            # grafana
             - name: grafana
               value: https://grafana.github.io/helm-charts
+            - name: values.yaml
+              value: https://github.com/grafana/helm-charts/blob/main/charts/grafana/values.yaml
+            # prometheus-node-exporter
             - name: prometheus-node-exporter
               value: https://prometheus-community.github.io/helm-charts
+            - name: values.yaml
+              value: https://github.com/prometheus-community/helm-charts/blob/main/charts/prometheus-node-exporter/values.yaml
+            # kube-state-metrics
             - name: kube-state-metrics
               value: https://prometheus-community.github.io/helm-charts
+            - name: values.yaml
+              value: https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-state-metrics/values.yaml
           source:
             chart: kube-prometheus-stack
             repoURL: https://kube-components-stack.github.io/helm-charts
