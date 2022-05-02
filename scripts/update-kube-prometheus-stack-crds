@@ -1,4 +1,7 @@
 #!/bin/bash
+
+set -e
+
 dialog_menu ()
 {
   set -e
@@ -45,8 +48,8 @@ templates_dir=$dst/templates
 crds=$(curl --silent ${GITHUB_PERSONAL_ACCESS_TOKEN:+--header 'Authorization: bearer '$GITHUB_PERSONAL_ACCESS_TOKEN} \
     --url "https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${ref}" \
     | jq -r '.[] | select( .download_url | match(".*\\.yaml$") ) | .download_url')
-#	download crds
-for crd in $crds; do curl -L --silent ${GITHUB_PERSONAL_ACCESS_TOKEN:+--header 'Authorization: bearer '$GITHUB_PERSONAL_ACCESS_TOKEN} --url "$crd" -o $dst/$(basename $crd) ;	done
+
+for crd in $crds; do curl -L --silent ${GITHUB_PERSONAL_ACCESS_TOKEN:+--header 'Authorization: bearer '$GITHUB_PERSONAL_ACCESS_TOKEN} --url "$crd" -o $templates_dir/$(basename $crd) ;	done
 
 git add $dst/*
 git ci -m "kube-prometheus-stack-crds version $version"
