@@ -461,8 +461,8 @@ apps:
             helm:
               skipCrds: true
               values: |
-                ---
                 {{- if or .Values.apps.logging.enabled .Values.apps.ingress.enabled }}
+                ---
                 kube-prometheus-stack:
                   alertmanager:
                     ingress:
