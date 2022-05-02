@@ -134,5 +134,47 @@ function dl_dashboard () {
   mv $tempfile "$path/$id-$revision.json"
 }
 
+function _dialog_menu_ ()
+{
+  set -ex
+
+  name="${1}"
+  items="${2}"
+  default_item="${3}"
+
+  options=$(echo "$items" | grep -v ^$| awk '{print NR" \""$0"\""}' | tr "\n" " ")
+  cmd="choices=\$(dialog --keep-tite ${default_item:+--default-item $default_item} --menu \"Select ${name}:\" $(expr $LINES - 5) $(expr $COLUMNS - 5) $(expr $LINES - 8) ${options} 2>&1 >/dev/tty)"
+  eval "$cmd"
+  test "$choices" = "" && exit 1
+  selected_item=$(echo "$items" | head -n$choices | tail -n1)
+
+  echo "${selected_item}"
+}
+
+function helm_repo_search ()
+{
+  repo="${1}"
+  if [ -z "$repo" ]; then
+    repos=$(helm repo list | sed -n '1d;p')
+    repo=$(_dialog_menu_ "repo" "$repos")
+    repo=$(echo $repo | cut -d' ' -f1)
+  fi
+
+  chart="${2}"
+  if [ -z "$chart" ]; then
+    charts=$(helm search repo $repo | sed "s~^$repo/~~")
+    chart=$(_dialog_menu_ "chart" "$charts")
+    chart=$(echo $chart | cut -d' ' -f1)
+  fi
+  echo "repo: $repo"
+  echo "chart: $chart"
+
+  # versions=$(helm search repo -l $repo/$chart)
+  # version=$(_dialog_menu_ "version" "$versions")
+  # version=$(echo $version | cut -d' ' -f2)
+
+  # helm inspect values ${repo}/${chart} --version $version
+}
+
 # Allows to call a function based on arguments passed to the script
 $*

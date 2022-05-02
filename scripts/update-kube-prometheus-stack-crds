@@ -1,0 +1,49 @@
+#!/bin/bash
+dialog_menu ()
+{
+  set -e
+
+  name="${1}"
+  items="${2}"
+  default_item="${3}"
+
+  options=$(echo "$items" | grep -v ^$| awk '{print NR" \""$0"\""}' | tr "\n" " ")
+  cmd="choices=\$(dialog --keep-tite ${default_item:+--default-item $default_item} --menu \"Select ${name}:\" 35 120 30 ${options} 2>&1 >/dev/tty)"
+  eval "$cmd"
+  test "$choices" = "" && exit 1
+  selected_item=$(echo "$items" | head -n$choices | tail -n1)
+
+  echo "${selected_item}"
+}
+
+chart=kube-prometheus-stack
+repoURL=https://prometheus-community.github.io/helm-charts
+helm repo add $chart --force-update $repoURL &> /dev/null
+
+versions=$(helm search repo -l $chart/$chart)
+version=$(dialog_menu "version" "$versions")
+version=$(echo $version | cut -d' ' -f2)
+
+appVersion=$(helm search repo $chart/$chart -o json --version $version | jq -r --arg name $chart/$chart '.[] | select(.name == $name) | .app_version')
+
+dst=charts/kube-prometheus-stack-crds
+
+chart_file=$dst/Chart.yaml
+yq -i '.version = "'$version'"' $chart_file
+yq -i '.appVersion = "'$appVersion'"' $chart_file
+
+## kube-prometheus-stack-crd
+#	extract repo, path & target
+owner=prometheus-community
+repo=helm-charts
+path=charts/kube-prometheus-stack/crds
+ref=kube-prometheus-stack-$version
+templates_dir=$dst/templates
+
+
+#	list crds
+crds=$(curl --silent ${GITHUB_PERSONAL_ACCESS_TOKEN:+--header 'Authorization: bearer '$GITHUB_PERSONAL_ACCESS_TOKEN} \
+    --url "https://api.github.com/repos/${owner}/${repo}/contents/${path}?ref=${ref}" \
+    | jq -r '.[] | select( .download_url | match(".*\\.yaml$") ) | .download_url')
+#	download crds
+for crd in $crds; do curl -L --silent ${GITHUB_PERSONAL_ACCESS_TOKEN:+--header 'Authorization: bearer '$GITHUB_PERSONAL_ACCESS_TOKEN} --url "$crd" -o $dst/$(basename $crd) ;	done

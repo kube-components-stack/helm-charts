@@ -13,6 +13,18 @@ ENVFILE := .env
 help:
 	@grep -E '(^[a-zA-Z_-]+:.*?##.*$$)' Makefile | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}'
 
+
+update-crds: ## update-crds:
+update-crds:
+	set -e
+	cd $(ROOT_DIR)
+	source scripts/tools
+
+	set -x
+	helm_repo_search
+
+
+
 update-charts: ## update-charts
 update-charts:
 	set -e
