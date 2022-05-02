@@ -47,3 +47,6 @@ crds=$(curl --silent ${GITHUB_PERSONAL_ACCESS_TOKEN:+--header 'Authorization: be
     | jq -r '.[] | select( .download_url | match(".*\\.yaml$") ) | .download_url')
 #	download crds
 for crd in $crds; do curl -L --silent ${GITHUB_PERSONAL_ACCESS_TOKEN:+--header 'Authorization: bearer '$GITHUB_PERSONAL_ACCESS_TOKEN} --url "$crd" -o $dst/$(basename $crd) ;	done
+
+git add $dst/*
+git ci -m "kube-prometheus-stack-crds version $version"
