@@ -320,6 +320,15 @@ entries:
     version: 0.1.0
   kube-prometheus-stack-crds:
   - apiVersion: v2
+    appVersion: 0.55.0
+    created: "2022-05-02T14:36:45.396969749Z"
+    description: Manage kube-prometheus-stack CRDs
+    digest: 9b65da5b1e0d69a8d4cc04ca179df40a4955cc58dcdd7c1e29a008dd903b46bc
+    name: kube-prometheus-stack-crds
+    urls:
+    - https://github.com/kube-components-stack/helm-charts/releases/download/kube-prometheus-stack-crds-34.10.0/kube-prometheus-stack-crds-34.10.0.tgz
+    version: 34.10.0
+  - apiVersion: v2
     appVersion: 0.54.1
     created: "2022-05-02T14:31:13.03337392Z"
     description: Manage kube-prometheus-stack CRDs
@@ -353,4 +362,4 @@ entries:
     urls:
     - https://github.com/kube-components-stack/helm-charts/releases/download/kubemod-0.1.0/kubemod-0.1.0.tgz
     version: 0.1.0
-generated: "2022-05-02T14:31:13.033549422Z"
+generated: "2022-05-02T14:36:45.397106547Z"
