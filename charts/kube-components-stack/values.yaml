@@ -422,11 +422,9 @@ apps:
             - name: split
               value: https://github.com/prometheus-operator/prometheus-operator/issues/4439#issuecomment-1030198014
           source:
-            directory:
-              recurse: true
-            path: charts/kube-prometheus-stack/crds/
-            repoURL: https://github.com/prometheus-community/helm-charts.git
-            targetRevision: kube-prometheus-stack-34.10.0
+            chart: kube-prometheus-stack-crds
+            repoURL: https://kube-components-stack.github.io/helm-charts
+            targetRevision: 34.10.0
           syncPolicy:
             syncOptions:
               - Replace=true
