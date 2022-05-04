@@ -1,6 +1,6 @@
 # Make defaults
 .DEFAULT_GOAL := help
-.SILENT: update-charts
+.SILENT: update-charts grafana-patch-dashboard
 SHELL := bash
 ROOT_DIR:=$(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 .ONESHELL:
@@ -48,6 +48,8 @@ grafana-update-dashboard:
 	set -e
 	cd $(ROOT_DIR)
 	source scripts/tools
+# 	update default kube-prometheus-stack dashboards & patch them
+	render_dashboards_from_helm_template
 # 	ArgoCD
 	dl_dashboard --id=14584 --revision=1 --tags=gitops --argocd-notifications
 #	Kubernetes - kube-dns
