@@ -457,11 +457,10 @@ apps:
           source:
             chart: kube-prometheus-stack
             repoURL: https://kube-components-stack.github.io/helm-charts
-            targetRevision: 0.1.1
+            targetRevision: 0.1.2
             helm:
               skipCrds: true
               values: |
-                {{- if or .Values.apps.logging.enabled .Values.apps.ingress.enabled }}
                 ---
                 kube-prometheus-stack:
                   alertmanager:
@@ -487,6 +486,7 @@ apps:
                         {{- end }}
                       {{- end }}
                   grafana:
+                    defaultDashboardsEnabled: false
                     {{- if .Values.apps.logging.enabled }}
                     additionalDataSources:
                     - name: Loki
@@ -538,7 +538,6 @@ apps:
                         - prometheus.{{ .Values.secondLevelDomain }}
                         {{- end }}
                       {{- end }}
-                {{- end }}
   # mutating
   mutating:
     enabled: true
