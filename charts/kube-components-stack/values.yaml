@@ -466,7 +466,7 @@ apps:
                 kube-prometheus-stack:
                   alertmanager:
                     ingress:
-                      enabled: true
+                      enabled: {{ if .Values.apps.ingress.enabled }}true{{ else }}false{{ end }}
                       ingressClassName: {{ .Values.apps.ingress.ingressClassName }}
                       annotations:
                         {{- if .Values.apps.certificates.enabled }}
@@ -496,7 +496,7 @@ apps:
                       version: 1
                     {{- end }}
                     ingress:
-                      enabled: true
+                      enabled: {{ if .Values.apps.ingress.enabled }}true{{ else }}false{{ end }}
                       ingressClassName: {{ .Values.apps.ingress.ingressClassName }}
                       annotations:
                         {{- if .Values.apps.certificates.enabled }}
@@ -518,7 +518,7 @@ apps:
                       {{- end }}
                   prometheus:
                     ingress:
-                      enabled: true
+                      enabled: {{ if .Values.apps.ingress.enabled }}true{{ else }}false{{ end }}
                       ingressClassName: {{ .Values.apps.ingress.ingressClassName }}
                       annotations:
                         {{- if .Values.apps.certificates.enabled }}
