@@ -126,7 +126,6 @@ spec:
         - |
           /bin/bash <<'EOF'
             set -euo pipefail
-            set -x
 
             namespace={{ .Values.apps.monitoring.namespace }}
 
@@ -147,7 +146,7 @@ spec:
               object=argocd-notifications-secret
               cmd="kubectl -n $namespace get secret -o=jsonpath='{.items[?(@.metadata.name==\"'$object'\")].metadata.name}'"
               check=$(eval $cmd)
-              if [[ -n "$check" ]]; then
+              if [[ -z "$check" ]]; then
                 kubectl -n $namespace create secret generic $object --from-literal=$key=$value
               else
                 kubectl -n $namespace patch secret $object --type='json' -p='[{"op" : "replace" ,"path" : "/data/'$key'" ,"value" : "'$(echo -n $value|base64 -w0)'"}]'
