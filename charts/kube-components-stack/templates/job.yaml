@@ -126,6 +126,7 @@ spec:
         - |
           /bin/bash <<'EOF'
             set -euo pipefail
+            set -x
 
             namespace={{ .Values.apps.monitoring.namespace }}
 
