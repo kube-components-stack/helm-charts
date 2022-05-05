@@ -3,7 +3,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "kube-components-stack.serviceAccountName" . }}-waiting-argocd-became-ready
+  name: waiting-argocd-became-ready
   labels:
     {{- include "kube-components-stack.labels" . | nindent 4 }}
   annotations:
@@ -54,7 +54,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "kube-components-stack.serviceAccountName" . }}-scale-down-deploy-cert-manager
+  name: scale-down-deploy-cert-manager
   labels:
     {{- include "kube-components-stack.labels" . | nindent 4 }}
   annotations:
@@ -105,7 +105,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "kube-components-stack.serviceAccountName" . }}-generate-grafana-api-key-argocd-notifications
+  name: generate-grafana-api-key-argocd-notifications
   labels:
     {{- include "kube-components-stack.labels" . | nindent 4 }}
   annotations:
@@ -178,7 +178,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "kube-components-stack.serviceAccountName" . }}-namespace-labelling
+  name: namespace-labelling
   labels:
     {{- include "kube-components-stack.labels" . | nindent 4 }}
   annotations:
@@ -225,7 +225,7 @@ spec:
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "kube-components-stack.serviceAccountName" . }}-rollout
+  name: rollout-in-order-to-apply-mutation
   labels:
     {{- include "kube-components-stack.labels" . | nindent 4 }}
   annotations:
