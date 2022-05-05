@@ -75,9 +75,9 @@ spec:
         - |
           /bin/bash <<'EOF'
             set +e
-            kubectl -n {{ (index .Values.apps "cert-manager-and-cluster-issuer").namespace }} scale deploy cert-manager --replicas=0
+            kubectl -n {{ .Values.apps.certificates.namespace }} scale deploy cert-manager --replicas=0
             sleep 1
-            kubectl -n {{ (index .Values.apps "cert-manager-and-cluster-issuer").namespace }} scale deploy cert-manager --replicas=0
+            kubectl -n {{ .Values.apps.certificates.namespace }} scale deploy cert-manager --replicas=0
           EOF
         image: "{{ .Values.job.image.repository }}:{{ .Values.job.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: {{ .Values.job.image.pullPolicy }}
