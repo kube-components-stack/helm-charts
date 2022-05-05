@@ -11,6 +11,20 @@ job:
     repository: bitnami/kubectl
     pullPolicy: Always # Always or IfNotPresent
     tag: "1.23"
+  
+  # env -- Set environment variables in kubectl containers
+  env: []
+    # - name: GRAFANA_ADMIN_USER
+    #   valueFrom:
+    #     secretKeyRef:
+    #       name: grafana-secret
+    #       key: admin-user
+    # - name: GRAFANA_ADMIN_PASSWORD
+    #   valueFrom:
+    #     secretKeyRef:
+    #       name: grafana-secret
+    #       key: admin-password
+
 serviceAccount:
   # Specifies whether a service account should be created
   create: true

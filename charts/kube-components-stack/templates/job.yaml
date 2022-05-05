@@ -100,7 +100,7 @@ spec:
       restartPolicy: Never
       serviceAccountName: {{ include "kube-components-stack.serviceAccountName" . }}-hooks
 {{- end }}
-{{- if and .Values.apps.monitoring.enabled .Values.apps.notifications.enabled }}
+{{- if and .Values.job.env .Values.apps.monitoring.enabled .Values.apps.notifications.enabled }}
 ---
 apiVersion: batch/v1
 kind: Job
@@ -139,9 +139,9 @@ spec:
             kubectl -n $namespace rollout status deploy/$object
 
             key=grafana-api-key-argocd-notifications
-            id=$(curl -u admin:admin -X GET -H "Content-Type: application/json" http://kube-prometheus-stack-grafana.{{ .Values.apps.monitoring.namespace }}.svc/api/auth/keys | jq --arg key $key '.[] | select(.name == $key) | .id')
+            id=$(curl -u ${GRAFANA_ADMIN_USER}:${GRAFANA_ADMIN_PASSWORD} -X GET -H "Content-Type: application/json" http://kube-prometheus-stack-grafana.{{ .Values.apps.monitoring.namespace }}.svc/api/auth/keys | jq --arg key $key '.[] | select(.name == $key) | .id')
             if [[ -z "$id" ]]; then
-              value=$(curl -u admin:admin -X POST -H "Content-Type: application/json" -d '{"name":"'$key'", "role": "Editor"}' http://kube-prometheus-stack-grafana.{{ .Values.apps.monitoring.namespace }}.svc/api/auth/keys | jq -r '.key')
+              value=$(curl -u ${GRAFANA_ADMIN_USER}:${GRAFANA_ADMIN_PASSWORD} -X POST -H "Content-Type: application/json" -d '{"name":"'$key'", "role": "Editor"}' http://kube-prometheus-stack-grafana.{{ .Values.apps.monitoring.namespace }}.svc/api/auth/keys | jq -r '.key')
               namespace={{ .Release.Namespace }}
               object=argocd-notifications-secret
               cmd="kubectl -n $namespace get secret -o=jsonpath='{.items[?(@.metadata.name==\"'$object'\")].metadata.name}'"
@@ -153,6 +153,10 @@ spec:
               fi
             fi
           EOF
+        {{- with .Values.job.env }}
+        env:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
         image: "{{ .Values.job.image.repository }}:{{ .Values.job.image.tag | default .Chart.AppVersion }}"
         imagePullPolicy: {{ .Values.job.image.pullPolicy }}
         name: kubectl
@@ -231,6 +235,7 @@ metadata:
   annotations:
     helm.sh/hook: post-install,post-upgrade
     helm.sh/hook-delete-policy: before-hook-creation
+    helm.sh/hook-weight: "5"
 spec:
   backoffLimit: 4
   template:
