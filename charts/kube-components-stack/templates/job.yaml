@@ -200,7 +200,7 @@ spec:
           /bin/bash <<'EOF'
             set -euo pipefail
             {{- range .Values.apps.mutating.protectedNamespaces }}
-            kubectl label namespace {{ . }} admission.kubemod.io/ignore=true --overwrite
+            kubectl get namespaces | grep -q {{ . }} && kubectl label namespace {{ . }} admission.kubemod.io/ignore=true --overwrite || true
             {{- end }}
           EOF
         image: "{{ .Values.job.image.repository }}:{{ .Values.job.image.tag | default .Chart.AppVersion }}"
