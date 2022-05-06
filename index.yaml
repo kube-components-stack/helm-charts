@@ -61,6 +61,16 @@ entries:
   kube-components-stack:
   - apiVersion: v2
     appVersion: 0.1.0
+    created: "2022-05-06T09:50:36.107300827Z"
+    description: A Helm chart for Kubernetes
+    digest: e3169ea945e2b39ff8e21893bffacc8058bcabcd09d334efa3bebef3a4320326
+    name: kube-components-stack
+    type: application
+    urls:
+    - https://github.com/kube-components-stack/helm-charts/releases/download/kube-components-stack-0.1.34/kube-components-stack-0.1.34.tgz
+    version: 0.1.34
+  - apiVersion: v2
+    appVersion: 0.1.0
     created: "2022-05-05T16:55:13.917274201Z"
     description: A Helm chart for Kubernetes
     digest: e73c73127f1a532bbe1653c3fb1a398c5f6341c452fd3b92f78422112ca752bf
@@ -491,4 +501,4 @@ entries:
     urls:
     - https://github.com/kube-components-stack/helm-charts/releases/download/kubemod-0.1.0/kubemod-0.1.0.tgz
     version: 0.1.0
-generated: "2022-05-06T09:34:57.637026676Z"
+generated: "2022-05-06T09:50:36.107914927Z"
