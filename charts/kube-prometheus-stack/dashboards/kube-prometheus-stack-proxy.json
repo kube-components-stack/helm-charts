@@ -1109,7 +1109,7 @@
       "30d"
     ]
   },
-  "timezone": "utc",
+  "timezone": "browser",
   "title": "Kubernetes / Proxy",
   "uid": "632e265de029684c40b21cb76bca4f94",
   "version": 0

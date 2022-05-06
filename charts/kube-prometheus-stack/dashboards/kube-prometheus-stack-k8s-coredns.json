@@ -1509,7 +1509,7 @@
       "1d"
     ]
   },
-  "timezone": "utc",
+  "timezone": "browser",
   "title": "CoreDNS",
   "uid": "vkQ0UHxik",
   "version": 2
