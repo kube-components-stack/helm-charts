@@ -252,7 +252,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(rate(prometheus_target_sync_length_seconds_sum{job=~\"$job\",instance=~\"$instance\"}[5m])) by (scrape_job) charts LICENSE Makefile README.md scripts 1e3",
+              "expr": "sum(rate(prometheus_target_sync_length_seconds_sum{job=~\"$job\",instance=~\"$instance\"}[5m])) by (scrape_job) * 1e3",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{scrape_job}}",
@@ -416,7 +416,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "rate(prometheus_target_interval_length_seconds_sum{job=~\"$job\",instance=~\"$instance\"}[5m]) / rate(prometheus_target_interval_length_seconds_count{job=~\"$job\",instance=~\"$instance\"}[5m]) charts LICENSE Makefile README.md scripts 1e3",
+              "expr": "rate(prometheus_target_interval_length_seconds_sum{job=~\"$job\",instance=~\"$instance\"}[5m]) / rate(prometheus_target_interval_length_seconds_count{job=~\"$job\",instance=~\"$instance\"}[5m]) * 1e3",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{interval}} configured",
@@ -928,7 +928,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "max by (slice) (prometheus_engine_query_duration_seconds{quantile=\"0.9\",job=~\"$job\",instance=~\"$instance\"}) charts LICENSE Makefile README.md scripts 1e3",
+              "expr": "max by (slice) (prometheus_engine_query_duration_seconds{quantile=\"0.9\",job=~\"$job\",instance=~\"$instance\"}) * 1e3",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{slice}}",

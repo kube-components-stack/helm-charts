@@ -68,7 +68,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "((\n instance:node_cpu_utilisation:rate5m{job=\"node-exporter\", cluster=\"$cluster\"}\n *\n instance:node_num_cpu:sum{job=\"node-exporter\", cluster=\"$cluster\"}\n) != 0 )\n/ scalar(sum(instance:node_num_cpu:sum{job=\"node-exporter\", cluster=\"$cluster\"}))\n",
+              "expr": "((\n  instance:node_cpu_utilisation:rate5m{job=\"node-exporter\", cluster=\"$cluster\"}\n  *\n  instance:node_num_cpu:sum{job=\"node-exporter\", cluster=\"$cluster\"}\n) != 0 )\n/ scalar(sum(instance:node_num_cpu:sum{job=\"node-exporter\", cluster=\"$cluster\"}))\n",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{ instance }}",
@@ -149,7 +149,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(\n instance:node_load1_per_cpu:ratio{job=\"node-exporter\", cluster=\"$cluster\"}\n / scalar(count(instance:node_load1_per_cpu:ratio{job=\"node-exporter\", cluster=\"$cluster\"}))\n) != 0\n",
+              "expr": "(\n  instance:node_load1_per_cpu:ratio{job=\"node-exporter\", cluster=\"$cluster\"}\n  / scalar(count(instance:node_load1_per_cpu:ratio{job=\"node-exporter\", cluster=\"$cluster\"}))\n)  != 0\n",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{instance}}",
@@ -243,7 +243,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(\n instance:node_memory_utilisation:ratio{job=\"node-exporter\", cluster=\"$cluster\"}\n / scalar(count(instance:node_memory_utilisation:ratio{job=\"node-exporter\", cluster=\"$cluster\"}))\n) != 0\n",
+              "expr": "(\n  instance:node_memory_utilisation:ratio{job=\"node-exporter\", cluster=\"$cluster\"}\n  / scalar(count(instance:node_memory_utilisation:ratio{job=\"node-exporter\", cluster=\"$cluster\"}))\n) != 0\n",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{instance}}",
@@ -627,7 +627,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(\n instance_device:node_disk_io_time_seconds:rate5m{job=\"node-exporter\", cluster=\"$cluster\"}\n / scalar(count(instance_device:node_disk_io_time_seconds:rate5m{job=\"node-exporter\", cluster=\"$cluster\"}))\n) != 0\n",
+              "expr": "(\n  instance_device:node_disk_io_time_seconds:rate5m{job=\"node-exporter\", cluster=\"$cluster\"}\n  / scalar(count(instance_device:node_disk_io_time_seconds:rate5m{job=\"node-exporter\", cluster=\"$cluster\"}))\n) != 0\n",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{instance}} {{device}}",
@@ -708,7 +708,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(\n instance_device:node_disk_io_time_weighted_seconds:rate5m{job=\"node-exporter\", cluster=\"$cluster\"}\n / scalar(count(instance_device:node_disk_io_time_weighted_seconds:rate5m{job=\"node-exporter\", cluster=\"$cluster\"}))\n) != 0\n",
+              "expr": "(\n  instance_device:node_disk_io_time_weighted_seconds:rate5m{job=\"node-exporter\", cluster=\"$cluster\"}\n  / scalar(count(instance_device:node_disk_io_time_weighted_seconds:rate5m{job=\"node-exporter\", cluster=\"$cluster\"}))\n) != 0\n",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{instance}} {{device}}",
@@ -802,7 +802,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum without (device) (\n max without (fstype, mountpoint) ((\n node_filesystem_size_bytes{job=\"node-exporter\", fstype!=\"\", cluster=\"$cluster\"}\n -\n node_filesystem_avail_bytes{job=\"node-exporter\", fstype!=\"\", cluster=\"$cluster\"}\n ) != 0)\n)\n/ scalar(sum(max without (fstype, mountpoint) (node_filesystem_size_bytes{job=\"node-exporter\", fstype!=\"\", cluster=\"$cluster\"})))\n",
+              "expr": "sum without (device) (\n  max without (fstype, mountpoint) ((\n    node_filesystem_size_bytes{job=\"node-exporter\", fstype!=\"\", cluster=\"$cluster\"}\n    -\n    node_filesystem_avail_bytes{job=\"node-exporter\", fstype!=\"\", cluster=\"$cluster\"}\n  ) != 0)\n)\n/ scalar(sum(max without (fstype, mountpoint) (node_filesystem_size_bytes{job=\"node-exporter\", fstype!=\"\", cluster=\"$cluster\"})))\n",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{instance}}",

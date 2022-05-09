@@ -68,7 +68,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(\n (1 - sum without (mode) (rate(node_cpu_seconds_total{job=\"node-exporter\", mode=~\"idle|iowait|steal\", instance=\"$instance\"}[$__rate_interval])))\n/ ignoring(cpu) group_left\n count without (cpu, mode) (node_cpu_seconds_total{job=\"node-exporter\", mode=\"idle\", instance=\"$instance\"})\n)\n",
+              "expr": "(\n  (1 - sum without (mode) (rate(node_cpu_seconds_total{job=\"node-exporter\", mode=~\"idle|iowait|steal\", instance=\"$instance\"}[$__rate_interval])))\n/ ignoring(cpu) group_left\n  count without (cpu, mode) (node_cpu_seconds_total{job=\"node-exporter\", mode=\"idle\", instance=\"$instance\"})\n)\n",
               "format": "time_series",
               "intervalFactor": 5,
               "legendFormat": "{{cpu}}",
@@ -264,7 +264,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "(\n node_memory_MemTotal_bytes{job=\"node-exporter\", instance=\"$instance\"}\n-\n node_memory_MemFree_bytes{job=\"node-exporter\", instance=\"$instance\"}\n-\n node_memory_Buffers_bytes{job=\"node-exporter\", instance=\"$instance\"}\n-\n node_memory_Cached_bytes{job=\"node-exporter\", instance=\"$instance\"}\n)\n",
+              "expr": "(\n  node_memory_MemTotal_bytes{job=\"node-exporter\", instance=\"$instance\"}\n-\n  node_memory_MemFree_bytes{job=\"node-exporter\", instance=\"$instance\"}\n-\n  node_memory_Buffers_bytes{job=\"node-exporter\", instance=\"$instance\"}\n-\n  node_memory_Cached_bytes{job=\"node-exporter\", instance=\"$instance\"}\n)\n",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "memory used",
@@ -385,7 +385,7 @@
           "tableColumn": "",
           "targets": [
             {
-              "expr": "100 -\n(\n avg(node_memory_MemAvailable_bytes{job=\"node-exporter\", instance=\"$instance\"})\n/\n avg(node_memory_MemTotal_bytes{job=\"node-exporter\", instance=\"$instance\"})\n* 100\n)\n",
+              "expr": "100 -\n(\n  avg(node_memory_MemAvailable_bytes{job=\"node-exporter\", instance=\"$instance\"})\n/\n  avg(node_memory_MemTotal_bytes{job=\"node-exporter\", instance=\"$instance\"})\n* 100\n)\n",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "",
@@ -569,14 +569,14 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "sum(\n max by (device) (\n node_filesystem_size_bytes{job=\"node-exporter\", instance=\"$instance\", fstype!=\"\"}\n -\n node_filesystem_avail_bytes{job=\"node-exporter\", instance=\"$instance\", fstype!=\"\"}\n )\n)\n",
+              "expr": "sum(\n  max by (device) (\n    node_filesystem_size_bytes{job=\"node-exporter\", instance=\"$instance\", fstype!=\"\"}\n  -\n    node_filesystem_avail_bytes{job=\"node-exporter\", instance=\"$instance\", fstype!=\"\"}\n  )\n)\n",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "used",
               "refId": "A"
             },
             {
-              "expr": "sum(\n max by (device) (\n node_filesystem_avail_bytes{job=\"node-exporter\", instance=\"$instance\", fstype!=\"\"}\n )\n)\n",
+              "expr": "sum(\n  max by (device) (\n    node_filesystem_avail_bytes{job=\"node-exporter\", instance=\"$instance\", fstype!=\"\"}\n  )\n)\n",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "available",

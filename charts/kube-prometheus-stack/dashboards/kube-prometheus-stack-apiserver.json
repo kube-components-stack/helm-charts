@@ -175,7 +175,7 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "100 charts LICENSE Makefile README.md scripts (apiserver_request:availability30d{verb=\"all\", cluster=\"$cluster\"} - 0.990000)",
+              "expr": "100 * (apiserver_request:availability30d{verb=\"all\", cluster=\"$cluster\"} - 0.990000)",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "errorbudget",

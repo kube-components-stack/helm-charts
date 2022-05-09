@@ -336,14 +336,14 @@
           "steppedLine": false,
           "targets": [
             {
-              "expr": "histogram_quantile(0.99,\n sum(rate(alertmanager_notification_latency_seconds_bucket{namespace=~\"$namespace\",service=~\"$service\", integration=\"$integration\"}[$__rate_interval])) by (le,namespace,service,instance)\n) \n",
+              "expr": "histogram_quantile(0.99,\n  sum(rate(alertmanager_notification_latency_seconds_bucket{namespace=~\"$namespace\",service=~\"$service\", integration=\"$integration\"}[$__rate_interval])) by (le,namespace,service,instance)\n) \n",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{instance}} 99th Percentile",
               "refId": "A"
             },
             {
-              "expr": "histogram_quantile(0.50,\n sum(rate(alertmanager_notification_latency_seconds_bucket{namespace=~\"$namespace\",service=~\"$service\", integration=\"$integration\"}[$__rate_interval])) by (le,namespace,service,instance)\n) \n",
+              "expr": "histogram_quantile(0.50,\n  sum(rate(alertmanager_notification_latency_seconds_bucket{namespace=~\"$namespace\",service=~\"$service\", integration=\"$integration\"}[$__rate_interval])) by (le,namespace,service,instance)\n) \n",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{instance}} Median",
