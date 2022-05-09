@@ -412,6 +412,20 @@ entries:
   kube-prometheus-stack:
   - apiVersion: v2
     appVersion: 0.55.0
+    created: "2022-05-09T13:59:13.715794479Z"
+    dependencies:
+    - name: kube-prometheus-stack
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 34.10.0
+    description: A Helm chart for Kubernetes
+    digest: 5afc762a42e516a5b3109124a7d354679930a8b98652064764678dbbadf367fb
+    name: kube-prometheus-stack
+    type: application
+    urls:
+    - https://github.com/kube-components-stack/helm-charts/releases/download/kube-prometheus-stack-0.1.4/kube-prometheus-stack-0.1.4.tgz
+    version: 0.1.4
+  - apiVersion: v2
+    appVersion: 0.55.0
     created: "2022-05-06T09:34:57.636649475Z"
     dependencies:
     - name: kube-prometheus-stack
@@ -501,4 +515,4 @@ entries:
     urls:
     - https://github.com/kube-components-stack/helm-charts/releases/download/kubemod-0.1.0/kubemod-0.1.0.tgz
     version: 0.1.0
-generated: "2022-05-06T09:50:36.107914927Z"
+generated: "2022-05-09T13:59:13.716104781Z"
