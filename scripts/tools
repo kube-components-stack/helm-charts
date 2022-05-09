@@ -146,28 +146,21 @@ function render_dashboards_from_helm_template () {
 
   helm repo add --force-update $name $repository >/dev/null 2>&1
   
-  dashboards=$(helm template $name $name/$name --set grafana.defaultDashboardsTimezone=browser | yq -o=json | jq '[.]' | jq -r '.[] | select(.kind | match("ConfigMap") ) | select(.metadata.labels.grafana_dashboard == "1" ) | { name: .metadata.name, json: (.data|to_entries[]|.value) }' | jq -s)  
-  rows=$(echo "${dashboards}" | jq -r '.[] | @base64')
-  nb=$(echo "$rows"|wc -l)
+  dashboards=$(mktemp /tmp/dashboards.XXXXXXXXXX)
+  helm template $name $name/$name --set grafana.defaultDashboardsTimezone=browser | yq -o=json | jq '[.]' | jq -r '.[] | select(.kind | match("ConfigMap") ) | select(.metadata.labels.grafana_dashboard == "1" ) | { name: .metadata.name, json: (.data|to_entries[]|.value) }' | jq -s > $dashboards
 
-  for row in $rows; do
-    _jq() {
-     echo ${row} | base64 --decode | jq -r ${1}
-    }
-    n=$(echo $(_jq '.name'))
-    j=$(echo $(_jq '.json'))
-
-    echo "${j}" | jq | sed '/-- .* --/! s/"datasource": "${DS_PROMETHEUS}",/"datasource": "Prometheus",/g' | \
+  for dashboard in $(cat $dashboards | jq -r '.[]?.name'); do
+    cat $dashboards | jq -r --arg dashboard $dashboard '.[]? | select( .name == $dashboard ) | .json' | sed '/-- .* --/! s/"datasource": "${DS_PROMETHEUS}",/"datasource": "Prometheus",/g' | \
     sed '/-- .* --/! s/"datasource": "$Datasource",/"datasource": "Prometheus",/g' | \
     sed '/-- .* --/! s/"datasource": "$datasource",/"datasource": "Prometheus",/g' | \
     sed '/-- .* --/! s/"datasource": "${DS_SYSTEM-PROMETHEUS}",/"datasource": "Prometheus",/g' | \
     sed '/-- .* --/! s/"datasource": "${DS_LOKI}",/"datasource": "Loki",/g' | \
-    sed '/-- .* --/! s/"datasource": "${DS_LOKI-FGC-NGINX01}",/"datasource": "Loki",/g' > $dashboardsPath/${n}.json
+    sed '/-- .* --/! s/"datasource": "${DS_LOKI-FGC-NGINX01}",/"datasource": "Loki",/g' > $dashboardsPath/${dashboard}.json
 
     tempfile=$(mktemp /tmp/dashboard.XXXXXXXXXX)
     trap "rm -Rf $tempfile" 0 2 3 15
-    cat $dashboardsPath/${n}.json | jq '.annotations.list = [{"datasource": "-- Grafana --","enable": true,"hide": true,"iconColor": "rgb(255, 255, 255)","limit": 100,"name": "ArgoCD Notifications","showIn": 0,"tags": ["argocd"],"type": "tags"}]' > $tempfile
-    mv $tempfile $dashboardsPath/${n}.json
+    cat $dashboardsPath/${dashboard}.json | jq '.annotations.list = [{"datasource": "-- Grafana --","enable": true,"hide": true,"iconColor": "rgb(255, 255, 255)","limit": 100,"name": "ArgoCD Notifications","showIn": 0,"tags": ["argocd"],"type": "tags"}]' > $tempfile
+    mv $tempfile $dashboardsPath/${dashboard}.json
 
   done
 
