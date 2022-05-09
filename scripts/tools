@@ -157,7 +157,12 @@ function render_dashboards_from_helm_template () {
     n=$(echo $(_jq '.name'))
     j=$(echo $(_jq '.json'))
 
-    echo "${j}" | jq > $dashboardsPath/${n}.json
+    echo "${j}" | jq | sed '/-- .* --/! s/"datasource": "${DS_PROMETHEUS}",/"datasource": "Prometheus",/g' | \
+    sed '/-- .* --/! s/"datasource": "$Datasource",/"datasource": "Prometheus",/g' | \
+    sed '/-- .* --/! s/"datasource": "$datasource",/"datasource": "Prometheus",/g' | \
+    sed '/-- .* --/! s/"datasource": "${DS_SYSTEM-PROMETHEUS}",/"datasource": "Prometheus",/g' | \
+    sed '/-- .* --/! s/"datasource": "${DS_LOKI}",/"datasource": "Loki",/g' | \
+    sed '/-- .* --/! s/"datasource": "${DS_LOKI-FGC-NGINX01}",/"datasource": "Loki",/g' > $dashboardsPath/${n}.json
 
     tempfile=$(mktemp /tmp/dashboard.XXXXXXXXXX)
     trap "rm -Rf $tempfile" 0 2 3 15
