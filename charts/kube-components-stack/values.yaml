@@ -473,7 +473,7 @@ apps:
           source:
             chart: kube-prometheus-stack
             repoURL: https://kube-components-stack.github.io/helm-charts
-            targetRevision: 0.1.4
+            targetRevision: 0.1.5
             helm:
               skipCrds: true
               values: |
