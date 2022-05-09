@@ -35,7 +35,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {},
@@ -128,7 +128,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(245, 54, 54, 0.9)"
           ],
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "format": "percent",
           "gauge": {
             "maxValue": 100,
@@ -221,7 +221,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "fill": 1,
           "fillGradient": 0,
           "gridPos": {},
@@ -314,7 +314,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(245, 54, 54, 0.9)"
           ],
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "format": "percent",
           "gauge": {
             "maxValue": 100,
@@ -423,7 +423,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "$datasource",
+        "datasource": "Prometheus",
         "hide": 2,
         "includeAll": false,
         "label": "cluster",
@@ -443,7 +443,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "$datasource",
+        "datasource": "Prometheus",
         "hide": 0,
         "includeAll": false,
         "label": "Namespace",
@@ -463,7 +463,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "$datasource",
+        "datasource": "Prometheus",
         "hide": 0,
         "includeAll": false,
         "label": "PersistentVolumeClaim",

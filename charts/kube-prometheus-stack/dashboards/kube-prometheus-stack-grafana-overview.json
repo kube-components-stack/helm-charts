@@ -24,7 +24,7 @@
   "links": [],
   "panels": [
     {
-      "datasource": "$datasource",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -83,7 +83,7 @@
       "type": "stat"
     },
     {
-      "datasource": "$datasource",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "mappings": [],
@@ -140,7 +140,7 @@
       "type": "stat"
     },
     {
-      "datasource": "$datasource",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "custom": {
@@ -230,7 +230,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -327,7 +327,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "Prometheus",
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -472,7 +472,7 @@
             "default/grafana"
           ]
         },
-        "datasource": "$datasource",
+        "datasource": "Prometheus",
         "definition": "label_values(grafana_build_info, job)",
         "description": null,
         "error": null,
@@ -502,7 +502,7 @@
           "text": "All",
           "value": "$__all"
         },
-        "datasource": "$datasource",
+        "datasource": "Prometheus",
         "definition": "label_values(grafana_build_info, instance)",
         "description": null,
         "error": null,

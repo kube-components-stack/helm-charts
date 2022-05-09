@@ -53,7 +53,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "$datasource",
+      "datasource": "Prometheus",
       "decimals": 0,
       "format": "time_series",
       "gauge": {
@@ -174,7 +174,7 @@
         "rgba(237, 129, 40, 0.89)",
         "#d44a3a"
       ],
-      "datasource": "$datasource",
+      "datasource": "Prometheus",
       "decimals": 0,
       "format": "time_series",
       "gauge": {
@@ -321,7 +321,7 @@
           "value": "pod"
         }
       ],
-      "datasource": "$datasource",
+      "datasource": "Prometheus",
       "fill": 1,
       "fontSize": "100%",
       "gridPos": {
@@ -544,7 +544,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "Prometheus",
       "fill": 2,
       "fillGradient": 0,
       "gridPos": {
@@ -635,7 +635,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "Prometheus",
       "fill": 2,
       "fillGradient": 0,
       "gridPos": {
@@ -737,7 +737,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "fill": 2,
           "fillGradient": 0,
           "gridPos": {
@@ -828,7 +828,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "fill": 2,
           "fillGradient": 0,
           "gridPos": {
@@ -939,7 +939,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "fill": 2,
           "fillGradient": 0,
           "gridPos": {
@@ -1030,7 +1030,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "fill": 2,
           "fillGradient": 0,
           "gridPos": {
@@ -1152,7 +1152,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "$datasource",
+        "datasource": "Prometheus",
         "hide": 2,
         "includeAll": false,
         "label": null,
@@ -1178,7 +1178,7 @@
           "text": "kube-system",
           "value": "kube-system"
         },
-        "datasource": "$datasource",
+        "datasource": "Prometheus",
         "definition": "label_values(container_network_receive_packets_total{cluster=\"$cluster\"}, namespace)",
         "hide": 0,
         "includeAll": true,
@@ -1206,7 +1206,7 @@
           "text": "5m",
           "value": "5m"
         },
-        "datasource": "$datasource",
+        "datasource": "Prometheus",
         "hide": 0,
         "includeAll": false,
         "label": null,
@@ -1249,7 +1249,7 @@
           "text": "5m",
           "value": "5m"
         },
-        "datasource": "$datasource",
+        "datasource": "Prometheus",
         "hide": 2,
         "includeAll": false,
         "label": null,

@@ -37,7 +37,7 @@
             "rgba(237, 129, 40, 0.89)",
             "rgba(50, 172, 45, 0.97)"
           ],
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "editable": true,
           "error": false,
           "format": "none",
@@ -110,7 +110,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "editable": true,
           "error": false,
           "fill": 0,
@@ -196,7 +196,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "editable": true,
           "error": false,
           "fill": 0,
@@ -289,7 +289,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "decimals": null,
           "editable": true,
           "error": false,
@@ -366,7 +366,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "editable": true,
           "error": false,
           "fill": 0,
@@ -449,7 +449,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "editable": true,
           "error": false,
           "fill": 0,
@@ -533,7 +533,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "editable": true,
           "error": false,
           "fill": 5,
@@ -609,7 +609,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "editable": true,
           "error": false,
           "fill": 5,
@@ -685,7 +685,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "editable": true,
           "error": false,
           "fill": 0,
@@ -761,7 +761,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "decimals": null,
           "editable": true,
           "error": false,
@@ -846,7 +846,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "editable": true,
           "error": false,
           "fill": 0,
@@ -945,7 +945,7 @@
         {
           "aliasColors": {},
           "bars": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "decimals": 0,
           "editable": true,
           "error": false,
@@ -1051,7 +1051,7 @@
           "text": "prod",
           "value": "prod"
         },
-        "datasource": "$datasource",
+        "datasource": "Prometheus",
         "hide": 2,
         "includeAll": false,
         "label": "cluster",

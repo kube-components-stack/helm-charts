@@ -49,7 +49,7 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "Prometheus",
       "fill": 2,
       "fillGradient": 0,
       "gridPos": {
@@ -144,7 +144,7 @@
       "bars": true,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "Prometheus",
       "fill": 2,
       "fillGradient": 0,
       "gridPos": {
@@ -250,7 +250,7 @@
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "fill": 2,
           "fillGradient": 0,
           "gridPos": {
@@ -345,7 +345,7 @@
           "bars": true,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "fill": 2,
           "fillGradient": 0,
           "gridPos": {
@@ -468,7 +468,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "Prometheus",
       "fill": 2,
       "fillGradient": 0,
       "gridPos": {
@@ -559,7 +559,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "$datasource",
+      "datasource": "Prometheus",
       "fill": 2,
       "fillGradient": 0,
       "gridPos": {
@@ -661,7 +661,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "fill": 2,
           "fillGradient": 0,
           "gridPos": {
@@ -752,7 +752,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "fill": 2,
           "fillGradient": 0,
           "gridPos": {
@@ -863,7 +863,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "fill": 2,
           "fillGradient": 0,
           "gridPos": {
@@ -954,7 +954,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "$datasource",
+          "datasource": "Prometheus",
           "fill": 2,
           "fillGradient": 0,
           "gridPos": {
@@ -1076,7 +1076,7 @@
       {
         "allValue": null,
         "current": {},
-        "datasource": "$datasource",
+        "datasource": "Prometheus",
         "hide": 2,
         "includeAll": false,
         "label": null,
@@ -1102,7 +1102,7 @@
           "text": "kube-system",
           "value": "kube-system"
         },
-        "datasource": "$datasource",
+        "datasource": "Prometheus",
         "definition": "label_values(container_network_receive_packets_total{job=\"kubelet\", metrics_path=\"/metrics/cadvisor\", cluster=\"$cluster\"}, namespace)",
         "hide": 0,
         "includeAll": true,
@@ -1130,7 +1130,7 @@
           "text": "",
           "value": ""
         },
-        "datasource": "$datasource",
+        "datasource": "Prometheus",
         "definition": "label_values(namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\"}, workload)",
         "hide": 0,
         "includeAll": false,
@@ -1158,7 +1158,7 @@
           "text": "deployment",
           "value": "deployment"
         },
-        "datasource": "$datasource",
+        "datasource": "Prometheus",
         "definition": "label_values(namespace_workload_pod:kube_pod_owner:relabel{cluster=\"$cluster\",namespace=~\"$namespace\", workload=~\"$workload\"}, workload_type)",
         "hide": 0,
         "includeAll": false,
@@ -1186,7 +1186,7 @@
           "text": "5m",
           "value": "5m"
         },
-        "datasource": "$datasource",
+        "datasource": "Prometheus",
         "hide": 0,
         "includeAll": false,
         "label": null,
@@ -1229,7 +1229,7 @@
           "text": "5m",
           "value": "5m"
         },
-        "datasource": "$datasource",
+        "datasource": "Prometheus",
         "hide": 2,
         "includeAll": false,
         "label": null,
