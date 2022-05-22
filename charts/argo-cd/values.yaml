@@ -1,0 +1,221 @@
+# https://artifacthub.io/packages/helm/argo/argo-cd
+# https://github.com/argoproj/argo-helm/tree/master/charts/argo-cd
+# https://github.com/argoproj/argo-helm/blob/master/charts/argo-cd/values.yaml
+fullnameOverride: argocd
+global:
+  image:
+    imagePullPolicy: Always
+  securityContext:
+    runAsUser: 999
+    runAsGroup: 999
+    fsGroup: 999
+applicationSet:
+  image:
+    imagePullPolicy: Always
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  securityContext:
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 1000
+    allowPrivilegeEscalation: false
+controller:
+  # https://github.com/argoproj/argo-cd/issues/3864
+  ## Application controller commandline flags
+  args:
+    # -- define the application controller `--status-processors`
+    statusProcessors: "20"
+    # -- define the application controller `--operation-processors`
+    operationProcessors: "50"
+    # -- define the application controller `--app-resync`
+    appResyncPeriod: "300"
+    # -- define the application controller `--self-heal-timeout-seconds`
+    selfHealTimeout: "5"
+    # -- define the application controller `--repo-server-timeout-seconds`
+    repoServerTimeoutSeconds: "300"
+    image:
+      imagePullPolicy: Always
+    initImage:
+      imagePullPolicy: Always
+    livenessProbe:
+      enabled: false
+    readinessProbe:
+      enabled: false
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    containerSecurityContext:
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 1000
+      allowPrivilegeEscalation: false
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: false
+      additionalLabels:
+        release: kube-prometheus-stack
+dex:
+  image:
+    imagePullPolicy: Always
+  initImage:
+    imagePullPolicy: Always
+  livenessProbe:
+    enabled: false
+  readinessProbe:
+    enabled: false
+  resources:
+    limits:
+      cpu: 50m
+      memory: 64Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi
+  containerSecurityContext:
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 1000
+    allowPrivilegeEscalation: false
+notifications:
+  enabled: false
+redis:
+  image:
+    imagePullPolicy: Always
+  livenessProbe:
+    enabled: true
+  readinessProbe:
+    enabled: true
+  resources:
+    limits:
+      cpu: 200m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 64Mi
+  metrics:
+    enabled: true
+    resources:
+      limits:
+        cpu: 50m
+        memory: 64Mi
+      requests:
+        cpu: 10m
+        memory: 32Mi
+  containerSecurityContext:
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 1000
+    allowPrivilegeEscalation: false
+repoServer:
+  image:
+    imagePullPolicy: Always
+  livenessProbe:
+    enabled: true
+  readinessProbe:
+    enabled: true
+  resources:
+    limits:
+      cpu: 50m
+      memory: 128Mi
+    requests:
+      cpu: 10m
+      memory: 64Mi
+  copyutil:
+    limits:
+      cpu: 50m
+      memory: 64Mi
+    requests:
+      cpu: 10m
+      memory: 32Mi
+  containerSecurityContext:
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 1000
+    allowPrivilegeEscalation: false
+  # see: https://github.com/argoproj/argo-cd/blob/master/common/common.go
+  env:
+    # https://github.com/argoproj/argo-cd/issues/2553
+    - name: ARGOCD_EXEC_TIMEOUT
+      value: 3m
+server:
+  # -- The number of server pods to run
+  replicas: 1
+
+  autoscaling:
+    # -- Enable Horizontal Pod Autoscaler ([HPA]) for the Argo CD server
+    enabled: false
+    # -- Minimum number of replicas for the Argo CD server [HPA]
+    minReplicas: 1
+    # -- Maximum number of replicas for the Argo CD server [HPA]
+    maxReplicas: 5
+    # -- Average CPU utilization percentage for the Argo CD server [HPA]
+    targetCPUUtilizationPercentage: 50
+    # -- Average memory utilization percentage for the Argo CD server [HPA]
+    targetMemoryUtilizationPercentage: 50
+  
+  # -- Additional command line arguments to pass to Argo CD server
+  extraArgs:
+    - --insecure
+  # -- Environment variables to pass to Argo CD server
+  env:
+    - name: HOME
+      value: /tmp/argocd
+  image:
+    imagePullPolicy: Always
+  livenessProbe:
+    enabled: true
+  readinessProbe:
+    enabled: true
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 50m
+      memory: 64Mi
+  containerSecurityContext:
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    runAsNonRoot: true
+    runAsUser: 1000
+    allowPrivilegeEscalation: false
+  # -- Deploy Argo CD Projects within this helm release
+  # @default -- `[]` (See [values.yaml])
+  ## Ref: https://github.com/argoproj/argo-cd/blob/master/docs/operator-manual/
+  additionalProjects:
+  - name: default
+    namespace: argocd
+    sourceRepos:
+    - '*'
+    destinations:
+    - namespace: '*'
+      server: '*'
+    clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
