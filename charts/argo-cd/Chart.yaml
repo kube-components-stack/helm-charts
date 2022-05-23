@@ -1,7 +1,13 @@
 apiVersion: v2
 name: argo-cd
 version: 1.0.1
+# https://helm.sh/docs/chart_best_practices/dependencies/
+# Please run following command in order to install dependencies :
+#   helm dependency build
+# and
+#   helm dependency update
+# for update them
 dependencies:
   - name: argo-cd
-    version: 4.6
+    version: 4.6.5
     repository: https://argoproj.github.io/argo-helm
