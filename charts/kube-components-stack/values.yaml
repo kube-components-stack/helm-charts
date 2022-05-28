@@ -73,6 +73,18 @@ global:
         jqPathExpressions:
         - '.spec.template.spec.containers[]?.securityContext'
         - '.spec.template.spec.containers[]?.resources'
+      - group: apps
+        kind: Deployment
+        jqPathExpressions:
+        - '.spec.template.spec.containers[]?.imagePullPolicy'
+      - group: apps
+        kind: DaemonSet
+        jqPathExpressions:
+        - '.spec.template.spec.containers[]?.imagePullPolicy'
+      - group: apps
+        kind: StatefulSet
+        jqPathExpressions:
+        - '.spec.template.spec.containers[]?.imagePullPolicy'
 apps:
   # certificates
   certificates:
@@ -122,6 +134,9 @@ apps:
                     enable-brotli: "true"
                   ingressClassResource:
                     name: {{ .Values.apps.ingress.ingressClassName }}
+                    controllerValue: k8s.io/ingress-{{ .Values.apps.ingress.ingressClassName }}
+                  ingressClassByName: true
+                  ingressClass: {{ .Values.apps.ingress.ingressClassName }}
                   service:
                     externalTrafficPolicy: "Local"
                   metrics:
@@ -144,6 +159,18 @@ apps:
               jqPathExpressions:
                 - .spec.template.metadata.labels."vector.sources.kubernetes-logs/label"
               kind: Deployment
+            - group: apps
+              kind: Deployment
+              jqPathExpressions:
+              - '.spec.template.spec.containers[]?.imagePullPolicy'
+            - group: apps
+              kind: DaemonSet
+              jqPathExpressions:
+              - '.spec.template.spec.containers[]?.imagePullPolicy'
+            - group: apps
+              kind: StatefulSet
+              jqPathExpressions:
+              - '.spec.template.spec.containers[]?.imagePullPolicy'
   # loadBalancing
   loadBalancing:
     enabled: true
