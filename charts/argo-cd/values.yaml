@@ -42,29 +42,29 @@ argo-cd:
       selfHealTimeout: "5"
       # -- define the application controller `--repo-server-timeout-seconds`
       repoServerTimeoutSeconds: "300"
-      image:
-        imagePullPolicy: Always
-      initImage:
-        imagePullPolicy: Always
-      livenessProbe:
-        enabled: false
-      readinessProbe:
-        enabled: false
-      resources:
-        limits:
-          cpu: '2'
-          memory: 2Gi
-        requests:
-          cpu: 250m
-          memory: 256Mi
-      containerSecurityContext:
-        capabilities:
-          drop:
-            - ALL
-        readOnlyRootFilesystem: true
-        runAsNonRoot: true
-        runAsUser: 1000
-        allowPrivilegeEscalation: false
+    image:
+      imagePullPolicy: Always
+    initImage:
+      imagePullPolicy: Always
+    livenessProbe:
+      enabled: false
+    readinessProbe:
+      enabled: false
+    resources:
+      limits:
+        cpu: '2'
+        memory: 2Gi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    containerSecurityContext:
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      runAsUser: 1000
+      allowPrivilegeEscalation: false
     metrics:
       enabled: true
       serviceMonitor:
