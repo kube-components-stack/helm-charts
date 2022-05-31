@@ -29,6 +29,21 @@ argo-cd:
       runAsUser: 1000
       allowPrivilegeEscalation: false
   controller:
+    # -- Environment variables to pass to Argo CD controller
+    # https://github.com/argoproj/argo-helm/issues/446
+    # The application-controller pod is really the one that should be able to list pods based on the RBAC config.
+    # This is also is true of the default install, where the server pod's service account can get pods but cannot list them.
+    env:
+      - name: HOME
+        value: /tmp/argocd
+    # -- Additional volumeMounts to the application controller main container
+    volumeMounts:
+      - name: tmp
+        mountPath: /tmp
+    # -- Additional volumes to the application controller pod
+    volumes:
+      - name: tmp
+        emptyDir: {}
     # https://github.com/argoproj/argo-cd/issues/3864
     ## Application controller commandline flags
     args:
