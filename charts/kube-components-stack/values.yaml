@@ -124,7 +124,7 @@ apps:
           source:
             chart: ingress-nginx
             repoURL: https://kubernetes.github.io/ingress-nginx
-            targetRevision: v4.0.19
+            targetRevision: v4.1.2
             helm:
               values: |
                 ---
@@ -137,6 +137,7 @@ apps:
                     controllerValue: k8s.io/ingress-{{ .Values.apps.ingress.ingressClassName }}
                   ingressClassByName: true
                   ingressClass: {{ .Values.apps.ingress.ingressClassName }}
+                  allowSnippetAnnotations: false
                   service:
                     externalTrafficPolicy: "Local"
                   metrics:
