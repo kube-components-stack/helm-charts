@@ -123,6 +123,20 @@ entries:
     version: 0.1.0
   cert-manager:
   - apiVersion: v2
+    appVersion: 1.6.1
+    created: "2022-06-01T18:59:21.221328166Z"
+    dependencies:
+    - name: cert-manager
+      repository: https://charts.jetstack.io
+      version: v1.6.1
+    description: A Helm chart for Kubernetes
+    digest: 94508e13c79d0ece00e5ecf6767680640ebc16da5bf3d145df14078a2ef8c0d2
+    name: cert-manager
+    type: application
+    urls:
+    - https://github.com/kube-components-stack/helm-charts/releases/download/cert-manager-0.1.1/cert-manager-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
     appVersion: v1.8.0
     created: "2022-04-25T09:07:05.021784913Z"
     dependencies:
@@ -647,4 +661,4 @@ entries:
     urls:
     - https://github.com/kube-components-stack/helm-charts/releases/download/kubemod-0.1.0/kubemod-0.1.0.tgz
     version: 0.1.0
-generated: "2022-06-01T07:50:12.258317138Z"
+generated: "2022-06-01T18:59:21.221865769Z"
