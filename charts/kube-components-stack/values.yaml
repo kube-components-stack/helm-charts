@@ -355,6 +355,12 @@ apps:
                   limits:
                     memory: 64Mi
                     cpu: 100m
+                
+                securityContext:
+                  readOnlyRootFilesystem: true
+                  capabilities:
+                    drop:
+                      - ALL
 
                 podMonitor:
                   enabled: true
