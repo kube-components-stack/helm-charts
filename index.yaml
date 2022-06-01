@@ -2,6 +2,17 @@ apiVersion: v1
 entries:
   argo-cd:
   - apiVersion: v2
+    created: "2022-06-01T07:50:12.257938032Z"
+    dependencies:
+    - name: argo-cd
+      repository: https://argoproj.github.io/argo-helm
+      version: 4.6.5
+    digest: 8df2168e7c4ff5416a828ab457170ee3f4a1020570354e81a80ab5bfe339fe2e
+    name: argo-cd
+    urls:
+    - https://github.com/kube-components-stack/helm-charts/releases/download/argo-cd-1.0.6/argo-cd-1.0.6.tgz
+    version: 1.0.6
+  - apiVersion: v2
     created: "2022-05-31T15:29:45.862199872Z"
     dependencies:
     - name: argo-cd
@@ -636,4 +647,4 @@ entries:
     urls:
     - https://github.com/kube-components-stack/helm-charts/releases/download/kubemod-0.1.0/kubemod-0.1.0.tgz
     version: 0.1.0
-generated: "2022-05-31T15:29:45.862506175Z"
+generated: "2022-06-01T07:50:12.258317138Z"
