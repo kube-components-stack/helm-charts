@@ -103,7 +103,7 @@ apps:
           source:
             chart: cert-manager
             repoURL: https://kube-components-stack.github.io/helm-charts
-            targetRevision: 0.1.0
+            targetRevision: 0.1.1
   # ingress
   ingress:
     enabled: true
