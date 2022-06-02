@@ -26,7 +26,6 @@ argo-cd:
           - ALL
       readOnlyRootFilesystem: true
       runAsNonRoot: true
-      runAsUser: 1000
       allowPrivilegeEscalation: false
   controller:
     # -- Environment variables to pass to Argo CD controller
@@ -78,7 +77,6 @@ argo-cd:
           - ALL
       readOnlyRootFilesystem: true
       runAsNonRoot: true
-      runAsUser: 1000
       allowPrivilegeEscalation: false
     metrics:
       enabled: true
@@ -108,7 +106,6 @@ argo-cd:
           - ALL
       readOnlyRootFilesystem: true
       runAsNonRoot: true
-      runAsUser: 1000
       allowPrivilegeEscalation: false
   notifications:
     # -- Enable Notifications controller
@@ -141,6 +138,12 @@ argo-cd:
     # -- Container Security Context
     containerSecurityContext:
       readOnlyRootFilesystem: true
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      runAsNonRoot: true
+      allowPrivilegeEscalation: false
 
     # -- Configures notification services such as slack, email or custom webhook
     # @default -- See [values.yaml]
@@ -582,7 +585,6 @@ argo-cd:
           - ALL
       readOnlyRootFilesystem: true
       runAsNonRoot: true
-      runAsUser: 1000
       allowPrivilegeEscalation: false
   repoServer:
     image:
@@ -611,7 +613,6 @@ argo-cd:
           - ALL
       readOnlyRootFilesystem: true
       runAsNonRoot: true
-      runAsUser: 1000
       allowPrivilegeEscalation: false
     # see: https://github.com/argoproj/argo-cd/blob/master/common/common.go
     env:
@@ -660,7 +661,6 @@ argo-cd:
           - ALL
       readOnlyRootFilesystem: true
       runAsNonRoot: true
-      runAsUser: 1000
       allowPrivilegeEscalation: false
     # -- Deploy Argo CD Projects within this helm release
     # @default -- `[]` (See [values.yaml])
