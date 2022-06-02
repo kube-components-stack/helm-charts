@@ -672,7 +672,7 @@ apps:
           source:
             chart: minio
             repoURL: https://charts.min.io
-            targetRevision: v3.6.6
+            targetRevision: v4.0.2
             helm:
               values: |
                 ---
@@ -683,8 +683,64 @@ apps:
                 # replicas: 4
 
                 persistence:
+                  accessMode: ReadWriteOnce
                   enabled: true
-                  size: 512Mi # 500Gi
+                  size: 512Mi #10Gi
+
+                resources:
+                  limits:
+                    cpu: 250m #500m #1
+                    memory: 384Mi #512Mi #1Gi #4Gi
+                  requests:
+                    cpu: 100m #250m #500m
+                    memory: 128Mi #256Mi #2Gi
+                
+                makePolicyJob:
+                  # securityContext:
+                  #   enabled: true
+                  resources:
+                    limits:
+                      cpu: 100m
+                      memory: 256Mi
+                    requests:
+                      cpu: 50m
+                      memory: 128Mi
+                
+                makeUserJob:
+                  # securityContext:
+                  #   enabled: true
+                  resources:
+                    limits:
+                      cpu: 100m
+                      memory: 256Mi
+                    requests:
+                      cpu: 50m
+                      memory: 128Mi
+                
+                makeBucketJob:
+                  # securityContext:
+                  #   enabled: true
+                  resources:
+                    limits:
+                      cpu: 100m
+                      memory: 256Mi
+                    requests:
+                      cpu: 50m
+                      memory: 128Mi
+
+                customCommandJob:
+                  # securityContext:
+                  #   enabled: true
+                  #   runAsUser: 1000
+                  #   runAsGroup: 1000
+                  #   fsGroup: 1000
+                  resources:
+                    limits:
+                      cpu: 100m
+                      memory: 256Mi
+                    requests:
+                      cpu: 50m
+                      memory: 128Mi
 
                 {{- if .Values.apps.ingress.enabled }}
                 ingress:
@@ -734,4 +790,26 @@ apps:
                     - minio-console.{{ .Values.secondLevelDomain }}
                     {{- end }}
                   {{- end }}
+                {{- end }}
+                
+                {{- if .Values.apps.logging.enabled }}
+                buckets:
+                    # Name of the bucket
+                  - name: loki
+                    # Policy to be set on the
+                    # bucket [none|download|upload|public]
+                    policy: public
+                    # Purge if bucket exists already
+                    purge: false
+                    # set versioning for
+                    versioning: ~ # true, false or ~ (standalone) 
+                    # Name of the bucket
+                  - name: logs
+                    # Policy to be set on the
+                    # bucket [none|download|upload|public]
+                    policy: public
+                    # Purge if bucket exists already
+                    purge: false
+                    # set versioning for
+                    versioning: ~ # true, false or ~ (standalone)
                 {{- end }}
