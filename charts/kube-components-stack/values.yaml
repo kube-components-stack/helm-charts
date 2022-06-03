@@ -682,6 +682,11 @@ apps:
                 mode: standalone # standalone or distributed
                 # replicas: 4
 
+                DeploymentUpdate:
+                  type: Recreate #RollingUpdate
+                  maxUnavailable: ~ #0
+                  maxSurge: ~ #100%
+
                 persistence:
                   accessMode: ReadWriteOnce
                   enabled: true
@@ -689,15 +694,18 @@ apps:
 
                 resources:
                   limits:
-                    cpu: 250m #500m #1
-                    memory: 384Mi #512Mi #1Gi #4Gi
+                    cpu: 100m #250m #500m #1
+                    memory: 256Mi #384Mi #512Mi #1Gi #4Gi
                   requests:
-                    cpu: 100m #250m #500m
-                    memory: 128Mi #256Mi #2Gi
-                
+                    cpu: 20m #100m #250m #500m
+                    memory: 100Mi #128Mi #256Mi #2Gi
+
+                configPathmc: "/tmp/minio/mc/"
+                # certsPath: "/tmp/minio/certs/"
+
                 makePolicyJob:
-                  # securityContext:
-                  #   enabled: true
+                  securityContext:
+                    enabled: true
                   resources:
                     limits:
                       cpu: 100m
@@ -707,8 +715,8 @@ apps:
                       memory: 128Mi
                 
                 makeUserJob:
-                  # securityContext:
-                  #   enabled: true
+                  securityContext:
+                    enabled: true
                   resources:
                     limits:
                       cpu: 100m
@@ -718,8 +726,8 @@ apps:
                       memory: 128Mi
                 
                 makeBucketJob:
-                  # securityContext:
-                  #   enabled: true
+                  securityContext:
+                    enabled: true
                   resources:
                     limits:
                       cpu: 100m
@@ -729,11 +737,8 @@ apps:
                       memory: 128Mi
 
                 customCommandJob:
-                  # securityContext:
-                  #   enabled: true
-                  #   runAsUser: 1000
-                  #   runAsGroup: 1000
-                  #   fsGroup: 1000
+                  securityContext:
+                    enabled: true
                   resources:
                     limits:
                       cpu: 100m
