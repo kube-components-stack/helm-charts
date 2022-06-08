@@ -100,7 +100,7 @@ spec:
       restartPolicy: Never
       serviceAccountName: {{ include "kube-components-stack.serviceAccountName" . }}-hooks
 {{- end }}
-{{- if and .Values.job.env .Values.apps.monitoring.enabled .Values.apps.notifications.enabled }}
+{{- if and .Values.job.env .Values.apps.monitoring.enabled }}
 ---
 apiVersion: batch/v1
 kind: Job
