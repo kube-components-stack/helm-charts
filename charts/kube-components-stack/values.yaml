@@ -10,7 +10,7 @@ job:
   image:
     repository: bitnami/kubectl
     pullPolicy: Always # Always or IfNotPresent
-    tag: "1.23"
+    tag: "1.24"
   
   # env -- Set environment variables in kubectl containers
   env: []
